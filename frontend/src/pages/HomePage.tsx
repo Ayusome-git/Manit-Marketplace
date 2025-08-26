@@ -7,7 +7,7 @@ import axios from "axios";
 
 export function Homepage() {
   async function profile(){
-await axios.get("http://localhost:3000/api/v1/profile", {
+await axios.get("http://localhost:3000/profile", {
   headers: {
     "authorization": localStorage.getItem("token")
   }

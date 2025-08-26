@@ -22,7 +22,7 @@ export function Login(){
             alert("only manit account is authorized");
             return;
         }
-        await axios.post("http://localhost:3000/api/v1/signin",{
+        await axios.post("http://localhost:3000/user/signin",{
             name,
             email,
             id
