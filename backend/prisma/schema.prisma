@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  userId          BigInt    @id
+  userId          String    @id
   email           String    @unique
   username        String
   phoneNo         String?      @unique
@@ -23,7 +23,7 @@ model User {
 }
 
 model Product {
-  productId        Int      @id @default(autoincrement())
+  productId        String      @id @default(uuid())
   category         String
   name             String
   description      String
@@ -31,13 +31,13 @@ model Product {
   productCondition String
   listedAt         DateTime @default(now())
   seller           User     @relation("UserProducts", fields: [sellerId], references: [userId])
-  sellerId         BigInt
+  sellerId         String
   wishlistedProducts Wishlist[]@relation("wishlistedProducts")
   productImages ProductImage[]@relation("productImg")
 }
 model ProductImage {
   imageId Int @id @default(autoincrement())
-  productId Int
+  productId String
   imageUrl String
   productImg Product @relation("productImg",fields: [productId], references: [productId])
 }
@@ -45,16 +45,16 @@ model ProductImage {
 model Rating {
   ratingId    Int    @id @default(autoincrement())
   ratingValue Int
-  ratedTo     BigInt
-  ratedBy     BigInt
+  ratedTo     String
+  ratedBy     String
   ratedToUser User   @relation("RatedTo", fields: [ratedTo], references: [userId])
   ratedByUser User   @relation("RatedBy", fields: [ratedBy], references: [userId])
 }
 
 model Wishlist{
   wishlistId Int @id @default(autoincrement())
-  userId BigInt
-  productId Int
+  userId String
+  productId String
   wishlistofuser User @relation("wishlistOfUser",fields: [userId], references: [userId])
   wishlistedProducts Product @relation("wishlistedProducts",fields: [productId],references: [productId])
   @@unique([userId, productId])
@@ -62,7 +62,7 @@ model Wishlist{
 
 model Notification{
   notificationId Int @id @default(autoincrement())
-  userId BigInt 
+  userId String 
   message String
   isRead Boolean @default(false)
   notificationTime DateTime @default(now())
@@ -71,8 +71,8 @@ model Notification{
 
 model Chat{
   id Int @id
-  senderId BigInt
-  receiverId BigInt
+  senderId String
+  receiverId String
   message String
   timestamp DateTime @default(now())
   senderUser User @relation("senderUser",fields: [senderId],references: [userId])

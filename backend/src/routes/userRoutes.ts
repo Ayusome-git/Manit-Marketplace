@@ -8,7 +8,7 @@ const client=new PrismaClient();
 app.post("/signin",async(req,res)=>{
     const email = req.body.email;
     const username = req.body.name;
-    const id=parseInt(req.body.id);
+    const id=req.body.id;
     const userExist= await client.user.findFirst({
         where:{
             email:email
@@ -34,12 +34,9 @@ app.post("/signin",async(req,res)=>{
 })
 
 
-app.get("/me",authmiddleware, async(req,res)=>{
+app.get("/:id",authmiddleware, async(req,res)=>{
     try {
-        // @ts-ignore
-        const data = req.data;
-        const id=data.email?.split("@")[0];
-        const userId=parseInt(id);
+        const userId=req.params.id
         if (!userId) {
             res.status(401).json({ error: "Unauthorized" });
             return;
@@ -53,7 +50,7 @@ app.get("/me",authmiddleware, async(req,res)=>{
             return;
         }
         res.json({
-            userId:user.userId.toString(),
+            userId:user.userId,
             email: user.email,
             username:user.username
         });
