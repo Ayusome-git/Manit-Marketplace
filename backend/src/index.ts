@@ -1,7 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
-import { authmiddleware} from './authmiddleware';
 import userRoutes from './routes/userRoutes';
 import productRoutes from './routes/productRoutes'
 

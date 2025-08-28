@@ -1,4 +1,4 @@
-import admin from "./admin";
+import admin from "../admin";
 import { Request, Response, NextFunction } from "express";
 
 export async function authmiddleware(req: Request, res: Response, next: NextFunction) {
@@ -10,7 +10,8 @@ export async function authmiddleware(req: Request, res: Response, next: NextFunc
     const token = authHeader
     try {
         const decodedToken = await admin.auth().verifyIdToken(token);
-        (req as any).data = decodedToken;
+        const id=decodedToken.email?.split("@")[0];
+        (req as any).id = id
         next();
     } catch (error) {
         res.status(401).json({ error: "Invalid or expired token" });

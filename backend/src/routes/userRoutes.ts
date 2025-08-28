@@ -1,6 +1,6 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client';
-import { authmiddleware } from '../authmiddleware';
+import { authmiddleware } from '../middleware/authmiddleware';
 
 const app = express();
 const client=new PrismaClient();
@@ -34,16 +34,21 @@ app.post("/signin",async(req,res)=>{
 })
 
 
-app.get("/:id",authmiddleware, async(req,res)=>{
+app.get("/me",authmiddleware, async(req,res)=>{
     try {
-        const userId=req.params.id
+        //@ts-ignore
+        const userId=req.id
         if (!userId) {
             res.status(401).json({ error: "Unauthorized" });
             return;
         }
         const user = await client.user.findUnique({
             where: { userId: userId },
-            select: { userId: true, email: true, username: true }
+            include:{
+                products:true,
+                whislist:true,
+                notification:true,
+            }
         });
         if (!user) {
             res.status(404).json({ error: "User not found" });
@@ -52,7 +57,7 @@ app.get("/:id",authmiddleware, async(req,res)=>{
         res.json({
             userId:user.userId,
             email: user.email,
-            username:user.username
+            username:user.username,
         });
     } catch (e) {
         console.error(e);

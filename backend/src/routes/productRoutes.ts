@@ -1,6 +1,7 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client';
-import { authmiddleware } from '../authmiddleware';
+import { authmiddleware } from '../middleware/authmiddleware';
+import { messaging } from 'firebase-admin';
 
 const app = express();
 const client=new PrismaClient();
@@ -9,25 +10,22 @@ const client=new PrismaClient();
 
 app.post("/",authmiddleware,async (req,res)=>{
     //@ts-ignore
-    const data = req.data;
-    const id=data.email?.split("@")[0];
-    const userId=parseInt(id);
+    const userId=req.id
     const category= req.body.category;
     const name=req.body.name;
     const description = req.body.description;
     const price = req.body.price;
     const productCondition = req.body.productCondition;
-    const sellerId = userId
     try{
         await client.product.create({
             data: {
-                category: category,
+                category,
                 name,
                 description,
                 price,
                 productCondition,
-                seller: {
-                    connect: { userId: sellerId }
+                seller:{
+                    connect:{userId}
                 }
             }
         })
@@ -37,8 +35,52 @@ app.post("/",authmiddleware,async (req,res)=>{
     }
 })
 
-app.get("/",authmiddleware,(req,res)=>{
-    
+app.get("/all",async(req,res)=>{
+    try{
+        const response=await client.product.findMany({
+            include:{
+                productImages:true
+            }
+        })
+        res.json({
+            response
+        })
+    }catch(e){
+        res.status(404).json({message:"not found"})
+    }
+})
+
+app.get("/:id",async(req,res)=>{
+    const productId=req.params.id
+    try{
+        const response = client.product.findFirst({
+            where:{
+                productId
+            },
+            include:{
+                productImages:true
+            }
+        })
+        res.status(200).json({message:"success"})
+    }catch(e){
+        res.status(404).json({message:"not found"})
+    }
+})
+
+app.delete("/:id",authmiddleware,async(req,res)=>{
+    //@ts-ignore
+    const userId= req.id
+    const productId=req.params.id
+    try{
+        const response=await client.product.delete({
+            where:{
+                productId
+            }
+        })
+        res.status(200).json({message:"deleted"})
+    }catch(e){
+        res.status(404).json({message:"not found"})
+    }
 })
 
 

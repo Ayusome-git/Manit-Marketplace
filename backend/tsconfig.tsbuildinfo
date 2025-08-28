@@ -1,1 +1,1 @@
-{"root":["./src/admin.ts","./src/authmiddleware.ts","./src/index.ts","./src/routes/productroutes.ts","./src/routes/userroutes.ts"],"version":"5.8.3"}
+{"root":["./src/admin.ts","./src/index.ts","./src/middleware/authmiddleware.ts","./src/routes/productroutes.ts","./src/routes/userroutes.ts"],"version":"5.8.3"}
