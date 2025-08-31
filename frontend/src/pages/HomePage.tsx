@@ -1,6 +1,8 @@
 
 import { Appbar } from "@/components/Appbar";
+import { FeaturedProducts } from "@/components/FeatureProducts";
 import { HeroSection } from "@/components/HeroSection";
+import { ProductCard } from "@/components/ProductCard";
 import axios from "axios";
 
 export function Homepage() {
@@ -11,6 +13,7 @@ export function Homepage() {
       <Appbar/>
     </div>
     <div><HeroSection/></div>
+    <div><FeaturedProducts/></div>
     </div>
   );
 }

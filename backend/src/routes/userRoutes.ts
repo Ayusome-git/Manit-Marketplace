@@ -46,7 +46,7 @@ app.get("/me",authmiddleware, async(req,res)=>{
             where: { userId: userId },
             include:{
                 products:true,
-                whislist:true,
+                wishlist:true,
                 notification:true,
             }
         });

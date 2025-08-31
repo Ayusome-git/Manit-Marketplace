@@ -11,15 +11,15 @@ model User {
   userId          String    @id
   email           String    @unique
   username        String
-  phoneNo         String?      @unique
+  phoneNo         String?   @unique
   hostelNo        Int?
   products        Product[] @relation("UserProducts")
-  ratingsGiven    Rating[] @relation("RatedBy")
-  ratingsReceived Rating[] @relation("RatedTo")
-  whislist        Wishlist[]@relation("wishlistOfUser")
+  ratingsGiven    Rating[]  @relation("RatedBy")
+  ratingsReceived Rating[]  @relation("RatedTo")
+  wishlist        Wishlist[]@relation("wishlistOfUser") 
   notification    Notification[]@relation("userNotification")
-  senderUser      Chat[]@relation("senderUser")
-  receiverUser    Chat[]@relation("receiverUser")
+  senderUser      Chat[]    @relation("senderUser")
+  receiverUser    Chat[]    @relation("receiverUser")
 }
 
 model Product {
