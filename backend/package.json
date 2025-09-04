@@ -14,11 +14,16 @@
     "@prisma/client": "^6.10.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/streamifier": "^0.1.2",
+    "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "firebase": "^11.9.1",
     "firebase-admin": "^13.4.0",
+    "multer": "^2.0.2",
     "prisma": "^6.10.1",
+    "streamifier": "^0.1.1",
     "typescript": "^5.8.3"
   }
 }

@@ -10,7 +10,7 @@ export function HeroSection() {
         <div className="text-5xl sm:text-7xl font-bold text-foreground mb-4">
           MANIT Marketplace
         </div>
-        <p className="text-sm text-muted-foreground mb-6">
+        <p className="text-sm text-muted-foreground mb-6 font-semibold">
           Buy and sell within your campus — simple, secure and local.
         </p>
 
