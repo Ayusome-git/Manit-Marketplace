@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Homepage } from './pages/HomePage'
 import { ThemeProvider } from './components/ui/theme-provider'
 import AdminHomePage from './pages/AdminHomePage'
+import { PostProduct } from './pages/PostProduct'
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
         <Route path='/' element={<Homepage/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/admin' element={<AdminHomePage/>}/>
+        <Route path='/postad' element={<PostProduct/>}/>
       </Routes>
     </BrowserRouter>
     </ThemeProvider>

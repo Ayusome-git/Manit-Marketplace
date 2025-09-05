@@ -24,12 +24,13 @@ app.post("/signin",async(req,res)=>{
                 }
             })
             res.status(201).json({ message: "User created" });
+            return;
         } else {
-            res.sendStatus(200).json({message:"Login Successfull"});
+            res.status(200).json({message:"Login Successfull"});
         }
     }catch(e){
         console.log(e);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
     }
 })
 

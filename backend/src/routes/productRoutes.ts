@@ -14,24 +14,27 @@ app.post("/",authmiddleware,async (req,res)=>{
     const category= req.body.category;
     const name=req.body.name;
     const description = req.body.description;
-    const price = req.body.price;
+    const price = parseInt(req.body.price)
     const productCondition = req.body.productCondition;
     try{
         await client.product.create({
             data: {
-                category,
                 name,
                 description,
+                category,
                 price,
                 productCondition,
-                seller:{
-                    connect:{userId}
-                }
+                sellerId:userId
             }
         })
         res.status(201).json({ message: "Product created" });
-    }catch(e){
-        res.status(500).json({error:"internal server error"});
+    }catch (e) {
+        console.error("Error creating product:", e);
+        if (e instanceof Error) {
+            res.status(500).json({ error: e.message });
+        } else {
+            res.status(500).json({ error: "Unknown error" });
+        }
     }
 })
 
