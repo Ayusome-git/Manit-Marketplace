@@ -2,13 +2,14 @@ import express from 'express'
 import { PrismaClient } from '@prisma/client';
 import { authmiddleware } from '../middleware/authmiddleware';
 import { messaging } from 'firebase-admin';
+import { upload, uploadImageToCloudinary } from "../middleware/uploadMiddleware";
 
 const app = express();
 const client=new PrismaClient();
 
 
 
-app.post("/",authmiddleware,async (req,res)=>{
+app.post("/",authmiddleware,upload.array("images",5),uploadImageToCloudinary,async (req,res)=>{
     //@ts-ignore
     const userId=req.id
     const category= req.body.category;
@@ -16,6 +17,7 @@ app.post("/",authmiddleware,async (req,res)=>{
     const description = req.body.description;
     const price = parseInt(req.body.price)
     const productCondition = req.body.productCondition;
+    const imageUrls=req.body.imageUrls;
     try{
         await client.product.create({
             data: {
@@ -24,7 +26,10 @@ app.post("/",authmiddleware,async (req,res)=>{
                 category,
                 price,
                 productCondition,
-                sellerId:userId
+                sellerId:userId,
+                productImages:{
+                    create:imageUrls.map((url:string)=>({imageUrl:url}))
+                }
             }
         })
         res.status(201).json({ message: "Product created" });

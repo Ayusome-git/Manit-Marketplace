@@ -1,5 +1,5 @@
-import { AddProduct } from "@/components/AddProduct";
-import { Appbar } from "@/components/Appbar";
+import { AddProduct } from "../components/AddProduct";
+import { Appbar } from "../components/Appbar";
 
 
 
@@ -7,7 +7,7 @@ import { Appbar } from "@/components/Appbar";
 export function PostProduct(){
     return<>
     <Appbar/>
-    <div className="mt-40 px-32">
+    <div className="mt-40">
         <AddProduct/>
     </div>
     </>
