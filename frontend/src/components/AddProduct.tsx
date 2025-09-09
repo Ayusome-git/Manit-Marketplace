@@ -14,7 +14,7 @@ import {
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import axios from "axios";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, X } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -30,7 +30,7 @@ export function AddProduct() {
   const [category, setCategory] = useState("");
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const [images, setImages] = useState<(File | null)[]>([null, null, null, null, null]);
+  const [images, setImages] = useState<(File | null)[]>([null, null, null, null, null, null]);
 
   const handleFile = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -40,6 +40,14 @@ export function AddProduct() {
       return updated;
     });
   };
+
+  function removeImage(idx: number) {
+    setImages((prev) => {
+      const updated = [...prev];
+      updated[idx] = null;
+      return updated;
+    });
+  }
 
   async function addProduct() {
     // Only require the first image
@@ -71,7 +79,7 @@ export function AddProduct() {
       // reset
       setName("");
       setDescription("");
-      setPrice("");
+      setImages([null, null, null, null, null, null]);
       setProductCondition("");
       setCategory("");
       setDate(undefined);
@@ -190,34 +198,43 @@ export function AddProduct() {
             onChange={(e) => setDescription(e.target.value)}
           ></Textarea>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 ">
-          {[0, 1, 2, 3, 4,5].map((idx) => (
-            <div key={idx} className="flex flex-col items-center sm:h-72">
-              <Label className="mb-1">
-                Image {idx + 1}{" "}
-                {idx === 0 ? (
-                  <span className="text-gray-400 text-xs">(Mandatory) <span className="text-red-400">*</span></span>
-                ) : idx > 0 && idx < 3 ? (
-                  <span className="text-gray-400 text-xs">(Recommendated)</span>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[0, 1, 2, 3, 4, 5].map((idx) => (
+              <div key={idx} className="flex flex-col items-center sm:h-72">
+                <Label className="mb-1">
+                  Image {idx + 1}{" "}
+                  {idx === 0 ? (
+                    <span className="text-gray-400 text-xs">
+                      (Mandatory) <span className="text-red-400">*</span>
+                    </span>
+                  ) : idx > 0 && idx < 3 ? (
+                    <span className="text-gray-400 text-xs">(Recommended)</span>
+                  ) : (
+                    <span className="text-gray-400 text-xs">(Optional)</span>
+                  )}
+                </Label>
+                {!images[idx] ? (
+                  <Input
+                    className="h-full"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFile(idx, e)}
+                    required={idx === 0}
+                  />
                 ) : (
-                  <span className="text-gray-400 text-xs">(Optional)</span>
+                  <div className="h-72 w-full rounded-2xl border p-3 flex items-center justify-center overflow-hidden relative">
+                    <img
+                      className="max-h-full max-w-full object-contain"
+                      src={URL.createObjectURL(images[idx])}
+                      alt="Preview"
+                    />
+                      <X className="w-4 h-4 text-red-500 top-2 right-1 absolute cursor-pointer" onClick={() => removeImage(idx)} />
+                  </div>
                 )}
-              </Label>
-              <Input
-                className="h-full"
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleFile(idx, e)}
-                required={idx === 0}
-              />
-              {images[idx] && (
-                <span className="text-xs mt-1">
-                  {images[idx]?.name}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+
         <div className="items-center justify-center w-full flex">
           <Button onClick={addProduct}>Submit</Button>
         </div>
