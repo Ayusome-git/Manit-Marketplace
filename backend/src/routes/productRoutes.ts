@@ -9,7 +9,7 @@ const client=new PrismaClient();
 
 
 
-app.post("/",authmiddleware,upload.array("images",5),uploadImageToCloudinary,async (req,res)=>{
+app.post("/",authmiddleware,upload.array("images",6),uploadImageToCloudinary,async (req,res)=>{
     //@ts-ignore
     const userId=req.id
     const category= req.body.category;

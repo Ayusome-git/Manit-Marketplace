@@ -3,21 +3,21 @@ import multer from "multer";
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { Request, Response, NextFunction } from "express";
 
-// ✅ Configure cloudinary
+//Configure cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME!,
   api_key: process.env.CLOUD_KEY!,
   api_secret: process.env.CLOUD_SECRET!,
 });
 
-// ✅ Multer storage (in-memory)
+//Multer storage (in-memory)
 const storage = multer.memoryStorage();
 export const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB/file
 });
 
-// ✅ Helper: upload buffer to Cloudinary
+//Helper: upload buffer to Cloudinary
 const uploadToCloudinary = (
   fileBuffer: Buffer,
   filename?: string
@@ -37,12 +37,12 @@ const uploadToCloudinary = (
       }
     );
 
-    // ✅ MUST call .end() or stream never finishes
+    //MUST call .end() or stream never finishes
     stream.end(fileBuffer);
   });
 };
 
-// ✅ Middleware for multiple images
+//Middleware for multiple images
 export const uploadImageToCloudinary = async (
   req: Request,
   res: Response,
@@ -58,13 +58,13 @@ export const uploadImageToCloudinary = async (
 
     const imageUrls: string[] = [];
 
-    // Upload sequentially to avoid timeout
+    //Upload sequentially to avoid timeout
     for (const file of files) {
       const result = await uploadToCloudinary(file.buffer, file.originalname);
       imageUrls.push(result.secure_url);
     }
 
-    // attach URLs to request for later use in controller
+    //attach URLs to request for later use in controller
     req.body.imageUrls = imageUrls;
 
     next();

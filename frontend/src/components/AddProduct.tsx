@@ -1,4 +1,3 @@
-
 import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
 import { Card } from "./ui/card";
@@ -31,16 +30,23 @@ export function AddProduct() {
   const [category, setCategory] = useState("");
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const [images,setImages]=useState<File[]>([])
+  const [images, setImages] = useState<(File | null)[]>([null, null, null, null, null]);
 
-
-    const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setImages(Array.from(e.target.files));
-    }
-  }
+  const handleFile = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    setImages((prev) => {
+      const updated = [...prev];
+      updated[index] = files && files[0] ? files[0] : null;
+      return updated;
+    });
+  };
 
   async function addProduct() {
+    // Only require the first image
+    if (!images[0]) {
+      alert("Please select the first (main) image.");
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -48,24 +54,35 @@ export function AddProduct() {
       formData.append("category", category);
       formData.append("price", price);
       formData.append("productCondition", productCondition);
+      if (date) formData.append("purchaseDate", date.toISOString());
       images.forEach((file) => {
-      formData.append("images", file);
+        if (file) formData.append("images", file);
       });
       await axios.post(
-        "http://localhost:3000/product",formData,
+        "http://localhost:3000/product",
+        formData,
         {
           headers: {
             authorization: localStorage.getItem("token"),
           },
         }
       );
-      alert("blog added");
+      alert("Product added");
+      // reset
+      setName("");
+      setDescription("");
+      setPrice("");
+      setProductCondition("");
+      setCategory("");
+      setDate(undefined);
+      setImages([null, null, null, null, null]);
     } catch (e) {
-      alert("blog failed");
+      alert("Adding product failed");
     }
   }
+
   return (
-    <div className="font-sans"> 
+    <div className="font-sans">
       <Card className="p-5 mx-5 sm:mx-32">
         <div className="gap-5 ">
           <Label className="px-1 text-sm py-1">
@@ -163,18 +180,46 @@ export function AddProduct() {
           </div>
         </div>
         <div className="">
+          <Label className="px-1 text-sm py-1">
+            Product Description
+          </Label>
           <Textarea
+            className="sm:min-h-36"
             placeholder="Enter the product description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           ></Textarea>
         </div>
-        <div className="grid w-full max-w-sm items-center gap-3">
-        <Label>Picture</Label>
-        <Input id="picture" type="file" accept="image/*" multiple onChange={handleFile} />
-      </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 ">
+          {[0, 1, 2, 3, 4,5].map((idx) => (
+            <div key={idx} className="flex flex-col items-center sm:h-72">
+              <Label className="mb-1">
+                Image {idx + 1}{" "}
+                {idx === 0 ? (
+                  <span className="text-gray-400 text-xs">(Mandatory) <span className="text-red-400">*</span></span>
+                ) : idx > 0 && idx < 3 ? (
+                  <span className="text-gray-400 text-xs">(Recommendated)</span>
+                ) : (
+                  <span className="text-gray-400 text-xs">(Optional)</span>
+                )}
+              </Label>
+              <Input
+                className="h-full"
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleFile(idx, e)}
+                required={idx === 0}
+              />
+              {images[idx] && (
+                <span className="text-xs mt-1">
+                  {images[idx]?.name}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
         <div className="items-center justify-center w-full flex">
-          <Button onClick={() => addProduct()}>Submit</Button>
+          <Button onClick={addProduct}>Submit</Button>
         </div>
       </Card>
     </div>
