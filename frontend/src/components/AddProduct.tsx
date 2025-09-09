@@ -95,6 +95,7 @@ export function AddProduct() {
         <div className="gap-5 ">
           <Label className="px-1 text-sm py-1">
             Product Name
+            <span className="text-red-400">*</span>
           </Label>
           <Input
             type="text"
@@ -108,6 +109,7 @@ export function AddProduct() {
           <div>
           <Label className="px-1 text-sm py-1">
             Category
+            <span className="text-red-400">*</span>
           </Label>
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger className="w-full">
@@ -115,7 +117,7 @@ export function AddProduct() {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Product Category</SelectLabel>
+                <SelectLabel>Product Category <span className="text-red-400">*</span></SelectLabel>
                 <SelectItem value="electronics">Electronics</SelectItem>
                 <SelectItem value="stationary">Stationary</SelectItem>
                 <SelectItem value="appliances">Appliances</SelectItem>
@@ -128,6 +130,7 @@ export function AddProduct() {
           <div className="gap-3">
             <Label className="px-1 py-1 text-sm">
               Purchase Date
+              <span className="text-red-400">*</span>
             </Label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
@@ -159,6 +162,7 @@ export function AddProduct() {
           <div>
           <Label className="px-1 text-sm py-1">
             Price
+            <span className="text-red-400">*</span>
           </Label>
           <Input
             className="w-full"
@@ -171,6 +175,7 @@ export function AddProduct() {
           <div>
           <Label className="px-1 text-sm py-1">
             Product Condition
+            <span className="text-red-400">*</span>
           </Label>
           <Select value={productCondition} onValueChange={setProductCondition}>
             <SelectTrigger className="w-full">
@@ -190,6 +195,7 @@ export function AddProduct() {
         <div className="">
           <Label className="px-1 text-sm py-1">
             Product Description
+            <span className="text-red-400">*</span>
           </Label>
           <Textarea
             className="sm:min-h-36"
