@@ -1,11 +1,45 @@
 import { Eye, Heart, MapPin } from "lucide-react";
-import { Card, CardContent, CardHeader } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
+import Autoplay from "embla-carousel-autoplay"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel"
+import React from "react";
 
 
 export function ProductCard(){
+
+    const plugin = React.useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: false })
+    )
     return(
         <Card className="font-sans">
-            <CardContent><img src="https://res.cloudinary.com/dfi92r28h/image/upload/v1753160232/cld-sample-5.jpg"></img>
+            <CardContent>
+            <Carousel
+            plugins={[plugin.current]}
+            className="w-full max-w-xs"
+            onMouseEnter={plugin.current.stop}
+            onMouseLeave={plugin.current.reset}>
+            <CarouselContent className="">
+                {Array.from({ length: 6}).map((_, index) => (
+                <CarouselItem key={index}>
+                    <div className="p-1">
+                    <Card>
+                        <CardContent className="flex aspect-square items-center justify-center p-6">
+                        <span className="text-4xl font-semibold">{index + 1}</span>
+                        </CardContent>
+                    </Card>
+                    </div>
+                </CarouselItem>
+                ))}
+            </CarouselContent>
+                <CarouselPrevious className="ml-7 size-5"/>
+                <CarouselNext className="mr-7 size-5" />
+            </Carousel>
             <div className="pt-2 text-xl">Hero cycle 6 Gear dual disc </div>
             <div className="flex justify-between">
                 <div className="py-1">₹5000</div>
