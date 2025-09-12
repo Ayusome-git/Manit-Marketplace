@@ -29,6 +29,7 @@ model Product {
   description      String
   price            Int
   productCondition String
+  viewCount           Int        @default(0)
   listedAt         DateTime @default(now())
   seller           User     @relation("UserProducts", fields: [sellerId], references: [userId])
   sellerId         String

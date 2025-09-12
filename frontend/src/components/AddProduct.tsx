@@ -14,7 +14,6 @@ import {
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
-import axios from "axios";
 import { ChevronDownIcon, X } from "lucide-react";
 import {
   Popover,
@@ -34,7 +33,6 @@ export function AddProduct() {
   const [images, setImages] = useState<(File | null)[]>([null, null, null, null, null, null]);
 const addProductStore = useProductStore((state) => state.addProduct);
 const loading = useProductStore((state) => state.loading);
-const error = useProductStore((state) => state.error);
 
   const handleFile = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

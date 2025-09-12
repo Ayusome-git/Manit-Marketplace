@@ -15,6 +15,7 @@ interface Product {
   price: number;
   productCondition: string;
   purchaseDate?: string;
+  viewCount:number;
   productImages: ProductImage[];
 }
 
@@ -28,7 +29,7 @@ interface ProductState {
 }
 
 export const useProductStore = create<ProductState>((set) => ({
-  products: [], // initialize as empty array
+  products: [],
   loading: false,
   error: null,
 
