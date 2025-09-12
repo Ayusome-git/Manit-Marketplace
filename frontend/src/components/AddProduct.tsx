@@ -2,6 +2,7 @@ import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
 import { Card } from "./ui/card";
 import { Calendar } from "./ui/calendar";
+import { useProductStore } from "../store/useProductStore";
 import {
   Select,
   SelectContent,
@@ -31,6 +32,9 @@ export function AddProduct() {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [images, setImages] = useState<(File | null)[]>([null, null, null, null, null, null]);
+const addProductStore = useProductStore((state) => state.addProduct);
+const loading = useProductStore((state) => state.loading);
+const error = useProductStore((state) => state.error);
 
   const handleFile = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -49,7 +53,7 @@ export function AddProduct() {
     });
   }
 
-  async function addProduct() {
+  async function handleAddProduct() {
     // Only require the first image
     if (!images[0]) {
       alert("Please select the first (main) image.");
@@ -66,15 +70,7 @@ export function AddProduct() {
       images.forEach((file) => {
         if (file) formData.append("images", file);
       });
-      await axios.post(
-        "http://localhost:3000/product",
-        formData,
-        {
-          headers: {
-            authorization: localStorage.getItem("token"),
-          },
-        }
-      );
+      await addProductStore(formData);
       alert("Product added");
       // reset
       setName("");
@@ -242,7 +238,9 @@ export function AddProduct() {
           </div>
 
         <div className="items-center justify-center w-full flex">
-          <Button onClick={addProduct}>Submit</Button>
+          {loading ? <Button variant="destructive" className="cursor-not-allowed"></Button> : (
+            <Button onClick={handleAddProduct}>Submit</Button>
+          )}
         </div>
       </Card>
     </div>
