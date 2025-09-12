@@ -57,11 +57,27 @@ app.get("/all",async(req,res)=>{
         res.status(404).json({message:"not found"})
     }
 })
+app.get("/featured",async(req,res)=>{
+    try{
+        const response=await client.product.findMany({
+            orderBy:{viewCount:"desc"},
+            take:8,
+            include:{
+                productImages:true
+            }
+        })
+        res.json({
+            response
+        })
+    }catch(e){
+        res.status(404).json({message:"not found"})
+    }
+})
 
 app.get("/:id",async(req,res)=>{
     const productId=req.params.id
     try{
-        const response = client.product.findFirst({
+        const product = client.product.findFirst({
             where:{
                 productId
             },
@@ -69,7 +85,7 @@ app.get("/:id",async(req,res)=>{
                 productImages:true
             }
         })
-        res.status(200).json({message:"success"})
+        res.status(200).json({ response: product });
     }catch(e){
         res.status(404).json({message:"not found"})
     }
@@ -90,6 +106,20 @@ app.delete("/:id",authmiddleware,async(req,res)=>{
         res.status(404).json({message:"not found"})
     }
 })
+
+app.post("/:id/viewCount", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await client.product.update({
+      where: { productId: id },
+      data: { viewCount: { increment: 1 } },
+    });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update view count" });
+  }
+});
 
 
 

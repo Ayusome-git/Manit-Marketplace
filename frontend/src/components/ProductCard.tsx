@@ -9,6 +9,8 @@ import {
 } from "./ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import React from "react";
+import { useProductStore } from "@/store/useProductStore";
+import { useNavigate } from "react-router-dom";
 
 interface ProductImage {
   imageId: string | number;
@@ -20,6 +22,7 @@ interface Product {
   productId: string;
   name: string;
   price: number;
+  viewCount:number;
   productImages: ProductImage[];
 }
 
@@ -29,6 +32,13 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const plugin = React.useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+  const increaseCount = useProductStore((state) => state.increaseCount);
+  const navigate=useNavigate();
+
+  const handleClick = () => {
+    increaseCount(product.productId);
+    navigate(`/product/${product.productId}`);
+  };
 
   return (
     <Card className="font-sans mb-4">
@@ -68,10 +78,10 @@ export function ProductCard({ product }: ProductCardProps) {
               </CarouselItem>
             )}
           </CarouselContent>
-          <CarouselPrevious className="ml-7 size-5" />
-          <CarouselNext className="mr-7 size-5" />
+          <CarouselPrevious className="ml-7 size-5 cursor-pointer" />
+          <CarouselNext className="mr-7 size-5 cursor-pointer" />
         </Carousel>
-
+        <div onClick={handleClick} className="cursor-pointer">
         <div className="pt-2 text-xl">{product.name}</div>
         <div className="flex justify-between">
           <div className="py-1">₹{product.price}</div>
@@ -81,11 +91,12 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
         <div className="flex justify-between items-center ">
           <div className="flex items-center gap-1">
-            <Eye className="size-5" /> 15 views
+            <Eye className="size-5" /> {product.viewCount}
           </div>
           <div>
             <Heart className="size-5" />
           </div>
+        </div>
         </div>
       </CardContent>
     </Card>

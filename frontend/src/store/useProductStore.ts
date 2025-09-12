@@ -18,18 +18,21 @@ interface Product {
   viewCount:number;
   productImages: ProductImage[];
 }
-
 interface ProductState {
   products: Product[];
+  featuredProducts: Product[];
   loading: boolean;
   error: string | null;
 
   fetchProducts: () => Promise<void>;
   addProduct: (data: FormData) => Promise<void>;
+  fetchFeaturedProducts: ()=>Promise<void>;
+  increaseCount: (id:string)=>Promise<void>;
 }
 
 export const useProductStore = create<ProductState>((set) => ({
   products: [],
+  featuredProducts: [],
   loading: false,
   error: null,
 
@@ -42,6 +45,20 @@ export const useProductStore = create<ProductState>((set) => ({
       set({ products: productsArray, loading: false });
     } catch (err: any) {
       set({ error: err.message || "Failed to fetch products", loading: false });
+    }
+  },
+
+  fetchFeaturedProducts: async () => {
+    set({ loading: true, error: null });
+    try {
+      const res = await axiosClient.get("/product/featured");
+      const data = res.data as { response: unknown };
+      const featuredArray = Array.isArray(data.response)
+        ? (data.response as Product[])
+        : [];
+      set({ featuredProducts: featuredArray, loading: false });
+    } catch (err: any) {
+      set({ error: err.message || "Failed to fetch featured products", loading: false });
     }
   },
 
@@ -59,6 +76,18 @@ export const useProductStore = create<ProductState>((set) => ({
       }));
     } catch (err: any) {
       set({ error: err.message || "Failed to add product", loading: false });
+    }
+  },
+  increaseCount: async (id: string) => {
+    try {
+      await axiosClient.post(`/product/${id}/viewCount`);
+      set((state) => ({
+        products: state.products.map((p) =>
+          p.productId === id ? { ...p, viewCount: p.viewCount + 1 } : p
+        ),
+      }));
+    } catch (err: any) {
+      console.error("Failed to increase product view count", err);
     }
   },
 }));
