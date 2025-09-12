@@ -89,14 +89,14 @@ export function ProductCard({ product }: ProductCardProps) {
             <MapPin className="size-4" /> Hostel-9
           </div>
         </div>
+        </div>
         <div className="flex justify-between items-center ">
           <div className="flex items-center gap-1">
             <Eye className="size-5" /> {product.viewCount}
           </div>
           <div>
-            <Heart className="size-5" />
+            <Heart className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
           </div>
-        </div>
         </div>
       </CardContent>
     </Card>
