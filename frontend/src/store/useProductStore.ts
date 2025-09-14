@@ -83,6 +83,7 @@ export const useProductStore = create<ProductState>((set) => ({
       
       const product = res.data as Product;
       set({ product, loading: false });
+      
     } catch (err: any) {
       set({ error: err.message || "Failed to fetch featured products", loading: false });
     }
@@ -112,6 +113,10 @@ export const useProductStore = create<ProductState>((set) => ({
         products: state.products.map((p) =>
           p.productId === id ? { ...p, viewCount: p.viewCount + 1 } : p
         ),
+        featuredProducts: state.featuredProducts.map((p) =>
+          p.productId === id ? { ...p, viewCount: p.viewCount + 1 } : p
+        ),
+        loading: false,
       }));
     } catch (err: any) {
       console.error("Failed to increase product view count", err);

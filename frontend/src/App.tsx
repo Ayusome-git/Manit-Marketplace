@@ -1,5 +1,4 @@
 import './App.css'
-import { Login } from './components/Login'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Homepage } from './pages/HomePage'
 import { ThemeProvider } from './components/ui/theme-provider'
@@ -15,7 +14,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Homepage/>}/>
-        <Route path='/login' element={<Login/>}/>
         <Route path='/admin' element={<AdminHomePage/>}/>
         <Route path='/postad' element={<PostProduct/>}/>
         <Route path='/product/:id' element={<ViewProduct/>}/>

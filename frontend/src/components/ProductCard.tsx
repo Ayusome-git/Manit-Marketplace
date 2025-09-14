@@ -79,7 +79,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <CarouselNext className="mr-7 size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
         </Carousel>
         <div onClick={handleClick} className="cursor-pointer">
-        <div className="pt-2 text-xl">{product.name}</div>
+        <div className="pt-2 text-xl truncate">{product.name}</div>
         <div className="flex justify-between">
           <div className="py-1">₹{product.price}</div>
           <div className="flex items-center gap-1">

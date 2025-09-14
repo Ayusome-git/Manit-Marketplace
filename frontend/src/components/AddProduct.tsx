@@ -21,6 +21,7 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { Label } from "@radix-ui/react-dropdown-menu";
+import { usePresenceData } from "motion/react";
 
 export function AddProduct() {
   const [name, setName] = useState("");
@@ -31,8 +32,9 @@ export function AddProduct() {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [images, setImages] = useState<(File | null)[]>([null, null, null, null, null, null]);
-const addProductStore = useProductStore((state) => state.addProduct);
-const loading = useProductStore((state) => state.loading);
+  const addProductStore = useProductStore((state) => state.addProduct);
+  const loading = useProductStore((state) => state.loading);
+  const error = useProductStore((state) => state.error);
 
   const handleFile = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -69,6 +71,10 @@ const loading = useProductStore((state) => state.loading);
         if (file) formData.append("images", file);
       });
       await addProductStore(formData);
+      if(error){
+        alert("Adding product failed");
+        return;
+      }
       alert("Product added");
       // reset
       setName("");

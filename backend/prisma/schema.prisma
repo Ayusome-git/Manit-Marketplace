@@ -26,7 +26,7 @@ model Product {
   productId        String      @id @default(uuid())
   category         String
   name             String
-  description      String
+  description      String     @db.Text
   price            Int
   productCondition String
   viewCount           Int        @default(0)

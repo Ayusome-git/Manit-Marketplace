@@ -6,11 +6,20 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/s
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
-import { Label } from "@radix-ui/react-dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu"
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function Appbar() {
   const nav = useNavigate();
   const isMobile = useIsMobile();
+  const {user, logout,login} =useAuthStore()
 
   const menuItems = [
     { label: "Profile", icon: <User className="h-5 w-5" />, path: "/profile" },
@@ -77,10 +86,19 @@ export function Appbar() {
           <div className="font-bold text-2xl hover:text-primary transition-colors cursor-pointer" onClick={()=>nav("/")}>Manit Marketplace</div>
           <div className="flex items-center gap-5">
             <ModeToggle />
-            <User
-              className="cursor-pointer hover:text-primary transition-colors hover:fill-primary"
-              onClick={() => nav("/profile")}
-            />
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+              <User
+              className="cursor-pointer hover:text-primary transition-colors hover:fill-primary"/>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={()=>nav("/profile")}>{user?.name}</DropdownMenuItem>
+                {(user!=null)?(<DropdownMenuItem className="text-red-500" onClick={logout}>Logout</DropdownMenuItem>):
+                (<DropdownMenuItem onClick={login}>Login</DropdownMenuItem>)}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Heart
               className="cursor-pointer hover:text-primary transition-colors hover:fill-primary"
               onClick={() => nav("/wishlist")}
