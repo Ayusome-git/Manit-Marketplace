@@ -13,10 +13,12 @@ import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function Product() {
   const { fetchProduct, product, loading, error } = useProductStore();
   const { id } = useParams<{ id: string }>();
+  const isMobile =useIsMobile()
   useEffect(() => {
     if (id) {
       fetchProduct(id);
@@ -27,7 +29,7 @@ export function Product() {
   if (error) return <div className="text-red-500">{error}</div>;
   if (!product) return <div>No products available</div>;
   return (
-    <div className="grid grid-cols-1 md:grid-cols-7 gap-4 font-sans">
+    <div className="grid grid-cols-1 md:grid-cols-7 px-5 sm:gap-4 font-sans">
       <div className="md:col-span-3 md:col-start-2">
         <Card>
         <Carousel className="w-full max-w-lg mx-auto">
@@ -58,15 +60,14 @@ export function Product() {
               </CarouselItem>
             )}
           </CarouselContent>
-          <CarouselPrevious className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
-        <CarouselNext className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
+          {!isMobile && (<><CarouselPrevious className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" /><CarouselNext className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" /></>)}
         </Carousel>
         </Card>
       </div>
-      <div className="md:col-span-2 md:col-start-5 mt-1">
+      <div className="md:col-span-2 md:col-start-5 mt-5 sm:mt-0 ">
         <Card>
           <CardContent className="flex flex-col items-start gap-1">
-            <div className="text-3xl">{product.description}</div>
+            <div className="text-3xl">{product.name}</div>
             <div className="gap-1 text-2xl">₹{product.price}</div>
             <div className="flex justify-between items-center w-full ">
               <div className="flex items-center gap-1">
@@ -79,6 +80,16 @@ export function Product() {
             <div className="flex items-center gap-1 justify-center w-full">
               <MapPin className="size-4" /> Hostel-9
             </div>
+          </CardContent>
+        </Card>
+        <Card className="mt-5 max-h-52 overflow-hidden">
+          <CardContent>
+            <div className="w-full flex justify-center text-2xl pb-2">
+              Product Description
+            </div>
+            <ScrollArea className="w-full h-[109px] ">
+              {product.description}
+            </ScrollArea>
           </CardContent>
         </Card>
         <Card className="mt-5">
@@ -103,16 +114,7 @@ export function Product() {
             </div>
           </CardContent>
         </Card>
-        <Card className="mt-5 max-h-52 overflow-hidden">
-          <CardContent>
-            <div className="w-full flex justify-center text-2xl pb-2">
-              Product Description
-            </div>
-            <ScrollArea className="w-full h-[105px] ">
-              {product.description}
-            </ScrollArea>
-          </CardContent>
-        </Card>
+        
       </div>
     </div>
   );
