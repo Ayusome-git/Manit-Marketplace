@@ -78,15 +78,15 @@ export function Appbar() {
           <div className="flex items-center gap-5">
             <ModeToggle />
             <User
-              className="cursor-pointer hover:text-primary transition-colors"
+              className="cursor-pointer hover:text-primary transition-colors hover:fill-primary"
               onClick={() => nav("/profile")}
             />
             <Heart
-              className="cursor-pointer hover:text-primary transition-colors"
+              className="cursor-pointer hover:text-primary transition-colors hover:fill-primary"
               onClick={() => nav("/wishlist")}
             />
             <MessageCircle
-              className="cursor-pointer hover:text-primary transition-colors"
+              className="cursor-pointer hover:text-primary transition-colors hover:fill-primary"
               onClick={() => nav("/messages")}
             />
             <Button onClick={() => nav("/postad")} variant="default">

@@ -50,9 +50,7 @@ app.get("/all",async(req,res)=>{
                 productImages:true
             }
         })
-        res.json({
-            response
-        })
+        res.json(response)
     }catch(e){
         res.status(404).json({message:"not found"})
     }
@@ -66,9 +64,8 @@ app.get("/featured",async(req,res)=>{
                 productImages:true
             }
         })
-        res.json({
-            response
-        })
+        
+        res.status(200).json(response)
     }catch(e){
         res.status(404).json({message:"not found"})
     }

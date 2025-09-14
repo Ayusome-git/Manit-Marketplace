@@ -40,8 +40,10 @@ export const useProductStore = create<ProductState>((set) => ({
     set({ loading: true, error: null });
     try {
       const res = await axiosClient.get("/product/all");
-      const data = res.data as { response: unknown };
-      const productsArray = Array.isArray(data.response) ? data.response as Product[] : [];
+      if(res.status!==200){
+        throw new Error("Something went wrong!");
+      }
+      const productsArray = res.data as Product[];
       set({ products: productsArray, loading: false });
     } catch (err: any) {
       set({ error: err.message || "Failed to fetch products", loading: false });
@@ -52,11 +54,13 @@ export const useProductStore = create<ProductState>((set) => ({
     set({ loading: true, error: null });
     try {
       const res = await axiosClient.get("/product/featured");
-      const data = res.data as { response: unknown };
-      const featuredArray = Array.isArray(data.response)
-        ? (data.response as Product[])
-        : [];
-      set({ featuredProducts: featuredArray, loading: false });
+      
+      if(res.status!==200){
+        throw new Error("Something went wrong!");
+      }
+      
+      const featuredProducts = res.data as Product[];
+      set({ featuredProducts, loading: false });
     } catch (err: any) {
       set({ error: err.message || "Failed to fetch featured products", loading: false });
     }
@@ -69,6 +73,7 @@ export const useProductStore = create<ProductState>((set) => ({
         headers: { "Content-Type": "multipart/form-data" },
       });
       const data = res.data as { response: Product };
+      console.log(data);
       const newProduct = data.response;
       set((state) => ({
         products: [...state.products, newProduct],

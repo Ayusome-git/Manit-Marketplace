@@ -7,7 +7,7 @@ export function HeroSection() {
   return (
     <div className="min-h-[24rem] flex items-center justify-center font-sans mt-16">
       <div className="w-full max-w-4xl px-6 text-center">
-        <div className="text-5xl sm:text-7xl font-bold text-foreground mb-4">
+        <div className="text-5xl sm:text-7xl font-bold text-foreground mb-4 hover:cursor-none hover:text-primary transition-colors">
           MANIT Marketplace
         </div>
         <p className="text-sm text-muted-foreground mb-6 font-semibold">

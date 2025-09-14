@@ -29,9 +29,8 @@ interface Product {
 interface ProductCardProps {
   product: Product;
 }
-
 export function ProductCard({ product }: ProductCardProps) {
-  const plugin = React.useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+  const plugin = React.useRef(Autoplay({ delay: 5000}));
   const increaseCount = useProductStore((state) => state.increaseCount);
   const navigate=useNavigate();
 
@@ -78,8 +77,8 @@ export function ProductCard({ product }: ProductCardProps) {
               </CarouselItem>
             )}
           </CarouselContent>
-          <CarouselPrevious className="ml-7 size-5 cursor-pointer" />
-          <CarouselNext className="mr-7 size-5 cursor-pointer" />
+          <CarouselPrevious className="ml-7 size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
+          <CarouselNext className="mr-7 size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
         </Carousel>
         <div onClick={handleClick} className="cursor-pointer">
         <div className="pt-2 text-xl">{product.name}</div>
