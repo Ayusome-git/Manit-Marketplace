@@ -14,6 +14,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "./ui/badge";
 
 export function Product() {
   const { fetchProduct, product, loading, error } = useProductStore();
@@ -63,6 +64,13 @@ export function Product() {
           {!isMobile && (<><CarouselPrevious className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" /><CarouselNext className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" /></>)}
         </Carousel>
         </Card>
+        <Card className="mt-5">
+            <CardContent className="flex gap-5">
+                <Badge >{product.category}</Badge>
+                <Badge variant="secondary">{product.productCondition}</Badge>
+                <Badge variant="secondary">{2024}</Badge>
+            </CardContent>
+        </Card>
       </div>
       <div className="md:col-span-2 md:col-start-5 mt-5 sm:mt-0 ">
         <Card>
@@ -80,16 +88,6 @@ export function Product() {
             <div className="flex items-center gap-1 justify-center w-full">
               <MapPin className="size-4" /> Hostel-9
             </div>
-          </CardContent>
-        </Card>
-        <Card className="mt-5 max-h-52 overflow-hidden">
-          <CardContent>
-            <div className="w-full flex justify-center text-2xl pb-2">
-              Product Description
-            </div>
-            <ScrollArea className="w-full h-[109px] ">
-              {product.description}
-            </ScrollArea>
           </CardContent>
         </Card>
         <Card className="mt-5">
@@ -114,7 +112,16 @@ export function Product() {
             </div>
           </CardContent>
         </Card>
-        
+        <Card className="mt-5 max-h-[254px] overflow-hidden">
+          <CardContent>
+            <div className="w-full flex justify-center text-2xl pb-2">
+              Product Description
+            </div>
+            <ScrollArea className="w-full h-[254px] pb-20">
+              {product.description}
+            </ScrollArea>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
