@@ -3,7 +3,7 @@ import { ProductCard } from "./ProductCard";
 import { useEffect } from "react";
 import { useProductStore } from "../store/useProductStore";
 
-export function FeaturedProducts() {
+export function FeaturedProducts(count:{count:number}) {
   const { featuredProducts, fetchFeaturedProducts, loading, error } = useProductStore();
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export function FeaturedProducts() {
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {featuredProducts.map((product) => (
+        {featuredProducts.slice(0,count.count).map((product) => (
           <ProductCard key={product.productId} product={product} />
         ))}
       </div>

@@ -74,15 +74,21 @@ app.get("/featured",async(req,res)=>{
 app.get("/:id",async(req,res)=>{
     const productId=req.params.id
     try{
-        const product = client.product.findFirst({
+        const product = await client.product.findFirst({
             where:{
-                productId
+                productId:productId
             },
             include:{
-                productImages:true
+                productImages:true,
+                seller:{
+                    select:{
+                        userId:true,
+                        username:true
+                    }
+                }
             }
         })
-        res.status(200).json({ response: product });
+        res.status(200).json(product);
     }catch(e){
         res.status(404).json({message:"not found"})
     }

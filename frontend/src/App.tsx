@@ -5,6 +5,7 @@ import { Homepage } from './pages/HomePage'
 import { ThemeProvider } from './components/ui/theme-provider'
 import AdminHomePage from './pages/AdminHomePage'
 import { PostProduct } from './pages/PostProduct'
+import { ViewProduct } from './pages/ViewProduct'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Route path='/login' element={<Login/>}/>
         <Route path='/admin' element={<AdminHomePage/>}/>
         <Route path='/postad' element={<PostProduct/>}/>
+        <Route path='/product/:id' element={<ViewProduct/>}/>
       </Routes>
     </BrowserRouter>
     </ThemeProvider>

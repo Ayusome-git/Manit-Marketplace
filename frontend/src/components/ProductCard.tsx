@@ -10,7 +10,7 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import React from "react";
 import { useProductStore } from "@/store/useProductStore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface ProductImage {
   imageId: string | number;
@@ -52,16 +52,14 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.productImages.length > 0 ? (
               product.productImages.map((img, index) => (
                 <CarouselItem key={index}>
-                  <div className="p-1">
-                    <Card className="">
-                      <CardContent className="flex aspect-square items-center justify-center max-h-56">
+                  <div className="p-1 justify-center items-center flex mb-1" >
+                      <div className="flex aspect-square items-center justify-center max-h-56">
                         <img
                           src={img.imageUrl}
                           alt={product.name}
                           className="overflow-hidden h-full w-full"
                         />
-                      </CardContent>
-                    </Card>
+                      </div>
                   </div>
                 </CarouselItem>
               ))

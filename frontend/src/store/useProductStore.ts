@@ -1,12 +1,16 @@
 import { create } from "zustand";
 import axiosClient from "../config/axios-config";
+import { Product } from "@/components/Product";
 
 interface ProductImage {
   imageId: string | number;
   productId: string;
   imageUrl: string;
 }
-
+interface Seller{
+  userId:string
+  username:string
+}
 interface Product {
   productId: string;
   name: string;
@@ -17,10 +21,12 @@ interface Product {
   purchaseDate?: string;
   viewCount:number;
   productImages: ProductImage[];
+  seller:Seller
 }
 interface ProductState {
   products: Product[];
   featuredProducts: Product[];
+  product:Product | null
   loading: boolean;
   error: string | null;
 
@@ -28,10 +34,12 @@ interface ProductState {
   addProduct: (data: FormData) => Promise<void>;
   fetchFeaturedProducts: ()=>Promise<void>;
   increaseCount: (id:string)=>Promise<void>;
+  fetchProduct:(id:string)=>Promise<void>
 }
 
 export const useProductStore = create<ProductState>((set) => ({
   products: [],
+  product:null,
   featuredProducts: [],
   loading: false,
   error: null,
@@ -61,6 +69,20 @@ export const useProductStore = create<ProductState>((set) => ({
       
       const featuredProducts = res.data as Product[];
       set({ featuredProducts, loading: false });
+    } catch (err: any) {
+      set({ error: err.message || "Failed to fetch featured products", loading: false });
+    }
+  },
+  fetchProduct:async(id:string)=>{
+    set({ loading: true, error: null });
+    try {
+      const res = await axiosClient.get(`/product/${id}`);
+      if(res.status!==200){
+        throw new Error("Something went wrong!");
+      }
+      
+      const product = res.data as Product;
+      set({ product, loading: false });
     } catch (err: any) {
       set({ error: err.message || "Failed to fetch featured products", loading: false });
     }

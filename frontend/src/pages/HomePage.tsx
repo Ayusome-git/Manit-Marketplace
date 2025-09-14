@@ -13,7 +13,7 @@ export function Homepage() {
       <Appbar/>
     </div>
     <div><HeroSection/></div>
-    <div><FeaturedProducts/></div>
+    <div><FeaturedProducts count={8} /></div>
     </div>
   );
 }
