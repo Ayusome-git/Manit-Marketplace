@@ -94,7 +94,7 @@ export function Appbar() {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={()=>nav("/profile")}>{user?.name}</DropdownMenuItem>
+                {<DropdownMenuItem onClick={()=>nav("/profile/myprofile")}>{user?user.username:"Profile"}</DropdownMenuItem>}
                 {(user!=null)?(<DropdownMenuItem className="text-red-500" onClick={logout}>Logout</DropdownMenuItem>):
                 (<DropdownMenuItem onClick={login}>Login</DropdownMenuItem>)}
               </DropdownMenuContent>
@@ -107,7 +107,7 @@ export function Appbar() {
               className="cursor-pointer hover:text-primary transition-colors hover:fill-primary"
               onClick={() => nav("/messages")}
             />
-            <Button onClick={() => nav("/postad")} variant="default">
+            <Button onClick={() => nav("/profile/postad")} variant="default">
               <PlusCircle className="mr-1 h-5 w-5" /> Post Ad
             </Button>
           </div>

@@ -3,8 +3,16 @@ import { auth, googleProvider } from "@/firebase/config";
 import { signInWithPopup } from "firebase/auth";
 import { create } from "zustand";
 
+
+interface User{
+    email: string;
+    userId: string;
+    username: string;
+    phoneNo: string | null;
+    hostelNo: number | null;
+}
 interface AuthState {
-  user: { name: string; email: string; id: string } | null;
+  user: User | null
   token: string | null;
   setUser: (user: AuthState["user"], token: string) => void;
   logout: () => void;
@@ -21,6 +29,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     localStorage.removeItem("token");
     set({ user: null, token: null });
+    alert("you have logged out!!!")
   },
   login: async () => {
     try {
@@ -32,14 +41,16 @@ export const useAuthStore = create<AuthState>((set) => ({
         return;
       }
 
-      const name = user.displayName!;
+      const username = user.displayName!;
       const email = user.email!;
-      const id = email.split("@")[0];
+      const userId = email.split("@")[0];
+      const hostelNo=null
+      const phoneNo=null
 
-      await axiosClient.post("/user/signin", { name, email, id });
+      await axiosClient.post("/user/signin", { username, email, userId });
 
       const token = await user.getIdToken();
-      set({ user: { name, email, id }, token });
+      set({ user: { username, email, userId,hostelNo,phoneNo }, token });
       localStorage.setItem("token",token);
     } catch (err: any) {
       if (err.code === "auth/popup-closed-by-user") {

@@ -22,8 +22,10 @@ import {
 } from "@radix-ui/react-popover";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { usePresenceData } from "motion/react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function AddProduct() {
+  const {user,login}=useAuthStore();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -88,7 +90,14 @@ export function AddProduct() {
       alert("Adding product failed");
     }
   }
-
+  if (!user) {
+    return (
+    <Card className="sm:mx-32 font-sans text-center  items-center">
+      <div>Please log in to post ad.</div>
+      <Button className="w-fit cursor-pointer" onClick={login}>Login</Button>
+    </Card>
+    )
+  }
   return (
     <div className="font-sans">
       <Card className="p-5 mx-5 sm:mx-32">

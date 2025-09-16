@@ -45,21 +45,8 @@ app.get("/me",authmiddleware, async(req,res)=>{
         }
         const user = await client.user.findUnique({
             where: { userId: userId },
-            include:{
-                products:true,
-                wishlist:true,
-                notification:true,
-            }
         });
-        if (!user) {
-            res.status(404).json({ error: "User not found" });
-            return;
-        }
-        res.json({
-            userId:user.userId,
-            email: user.email,
-            username:user.username,
-        });
+        res.status(200).json(user);
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: "Internal server error" });
