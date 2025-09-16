@@ -70,7 +70,23 @@ app.get("/featured",async(req,res)=>{
         res.status(404).json({message:"not found"})
     }
 })
-
+app.get("/myads",authmiddleware,async(req,res)=>{
+    //@ts-ignore
+    const userId=req.userId
+    try{
+        const products= await client.product.findMany({
+            where:{
+                sellerId:userId
+            },
+            include:{
+                productImages:true
+            }
+        })
+        res.status(200).json(products)
+    }catch(e){
+        res.status(401).json({message:"error while fetching ads"})
+    }
+})
 app.get("/:id",async(req,res)=>{
     const productId=req.params.id
     try{

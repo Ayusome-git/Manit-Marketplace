@@ -26,6 +26,7 @@ interface Product {
 interface ProductState {
   products: Product[];
   featuredProducts: Product[];
+  MyProducts: Product[];
   product:Product | null
   loading: boolean;
   error: string | null;
@@ -35,12 +36,14 @@ interface ProductState {
   fetchFeaturedProducts: ()=>Promise<void>;
   increaseCount: (id:string)=>Promise<void>;
   fetchProduct:(id:string)=>Promise<void>
+  fetchMyProducts:()=>Promise<void>
 }
 
 export const useProductStore = create<ProductState>((set) => ({
   products: [],
   product:null,
   featuredProducts: [],
+  MyProducts:[],
   loading: false,
   error: null,
 
@@ -88,7 +91,21 @@ export const useProductStore = create<ProductState>((set) => ({
       set({ error: err.message || "Failed to fetch featured products", loading: false });
     }
   },
-
+  fetchMyProducts: async () => {
+    set({ loading: true, error: null });
+    try {
+      const res = await axiosClient.get("/product/myads");
+      
+      if(res.status!==200){
+        throw new Error("Something went wrong!");
+      }
+      
+      const MyProducts = res.data as Product[];
+      set({ MyProducts, loading: false });
+    } catch (err: any) {
+      set({ error: err.message || "Failed to fetch featured products", loading: false });
+    }
+  },
   addProduct: async (formData) => {
     set({ loading: true, error: null });
     try {
