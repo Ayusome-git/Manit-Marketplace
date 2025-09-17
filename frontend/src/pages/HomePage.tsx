@@ -11,13 +11,9 @@ export function Homepage() {
 
   return (
     <div>
-    <div className="flex justify-center">
-      <Appbar/>
-    </div>
     <div><HeroSection/></div>
     <div><FeaturedProducts/></div>
     <div><RecentlyAdded/></div>
-    <div><Footer/></div>
     </div>
   );
 }

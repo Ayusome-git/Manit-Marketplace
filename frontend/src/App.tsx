@@ -6,6 +6,7 @@ import AdminHomePage from './pages/AdminHomePage'
 import { PostProduct } from './pages/PostProduct'
 import { ViewProduct } from './pages/ViewProduct'
 import { Profile } from './pages/Profile'
+import { Layout } from './components/Layout'
 
 function App() {
 
@@ -14,10 +15,12 @@ function App() {
     <ThemeProvider defaultTheme='dark' storageKey="vite-ui-theme">
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Homepage/>}/>
-        <Route path='/admin' element={<AdminHomePage/>}/>
-        <Route path='/product/:id' element={<ViewProduct/>}/>
-        <Route path='/profile/:tab' element={<Profile/>}/>
+        <Route element={<Layout />}>
+            <Route path='/' element={<Homepage />} />
+            <Route path='/admin' element={<AdminHomePage />} />
+            <Route path='/product/:id' element={<ViewProduct />} />
+            <Route path='/profile/:tab' element={<Profile />} />
+          </Route>
       </Routes>
     </BrowserRouter>
     </ThemeProvider>
