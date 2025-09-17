@@ -2,9 +2,12 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 
-export function Chat() {
-  const { user, login } = useAuthStore();
-  if (!user) {
+
+
+
+export function Wishlist(){
+    const {user,login} = useAuthStore()
+    if (!user) {
     return (
       <Card className="sm:mx-32 font-sans text-center items-center">
         <div>Please log in to view your profile.</div>
