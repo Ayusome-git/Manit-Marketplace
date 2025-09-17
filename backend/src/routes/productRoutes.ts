@@ -70,6 +70,21 @@ app.get("/featured",async(req,res)=>{
         res.status(404).json({message:"not found"})
     }
 })
+app.get("/recent",async(req,res)=>{
+    try{
+        const response=await client.product.findMany({
+            orderBy:{listedAt:"desc"},
+            take:8,
+            include:{
+                productImages:true
+            }
+        })
+        
+        res.status(200).json(response)
+    }catch(e){
+        res.status(404).json({message:"not found"})
+    }
+})
 app.get("/myads",authmiddleware,async(req,res)=>{
     //@ts-ignore
     const userId=req.userId

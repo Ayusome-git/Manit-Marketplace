@@ -29,12 +29,6 @@ export function MyAds(){
 
   return (
     <Card className="font-sans p-5 mx-5 sm:mx-32">
-      <div className="flex justify-between items-center mb-5">
-        <div className="w-fit text-xl sm:text-4xl font-semibold">Featured Items</div>
-        <div className="text-xl sm:text-4xl flex items-center gap-2 font-semibold cursor-pointer hover:text-primary transition-colors">
-          View All <ArrowRight className="sm:size-10" />
-        </div>
-      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
         {MyProducts.map((product) => (
           <ProductCard key={product.productId} product={product} />

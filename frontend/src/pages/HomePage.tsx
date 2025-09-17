@@ -1,8 +1,10 @@
 
 import { Appbar } from "@/components/Appbar";
 import { FeaturedProducts } from "@/components/FeatureProducts";
+import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/HeroSection";
 import { ProductCard } from "@/components/ProductCard";
+import { RecentlyAdded } from "@/components/RecentlyAdded";
 import axios from "axios";
 
 export function Homepage() {
@@ -13,7 +15,9 @@ export function Homepage() {
       <Appbar/>
     </div>
     <div><HeroSection/></div>
-    <div><FeaturedProducts count={8} /></div>
+    <div><FeaturedProducts/></div>
+    <div><RecentlyAdded/></div>
+    <div><Footer/></div>
     </div>
   );
 }

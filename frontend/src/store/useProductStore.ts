@@ -27,6 +27,7 @@ interface ProductState {
   products: Product[];
   featuredProducts: Product[];
   MyProducts: Product[];
+  RecentProducts:Product[];
   product:Product | null
   loading: boolean;
   error: string | null;
@@ -34,6 +35,7 @@ interface ProductState {
   fetchProducts: () => Promise<void>;
   addProduct: (data: FormData) => Promise<void>;
   fetchFeaturedProducts: ()=>Promise<void>;
+  fetchRecentProducts:()=>Promise<void>;
   increaseCount: (id:string)=>Promise<void>;
   fetchProduct:(id:string)=>Promise<void>
   fetchMyProducts:()=>Promise<void>
@@ -43,6 +45,7 @@ export const useProductStore = create<ProductState>((set) => ({
   products: [],
   product:null,
   featuredProducts: [],
+  RecentProducts:[],
   MyProducts:[],
   loading: false,
   error: null,
@@ -106,6 +109,22 @@ export const useProductStore = create<ProductState>((set) => ({
       set({ error: err.message || "Failed to fetch featured products", loading: false });
     }
   },
+   fetchRecentProducts: async () => {
+    set({ loading: true, error: null });
+    try {
+      const res = await axiosClient.get("/product/recent");
+      
+      if(res.status!==200){
+        throw new Error("Something went wrong!");
+      }
+      
+      const RecentProducts = res.data as Product[];
+      set({ RecentProducts, loading: false });
+    } catch (err: any) {
+      set({ error: err.message || "Failed to fetch featured products", loading: false });
+    }
+  },
+  
   addProduct: async (formData) => {
     set({ loading: true, error: null });
     try {
