@@ -2,8 +2,15 @@ import { SearchIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card } from "./ui/card";
+import { SearchBar } from "./SearchBar";
+import { useProductStore } from "@/store/useProductStore";
+import { useEffect } from "react";
 
 export function HeroSection() {
+  const {fetchProducts}=useProductStore()
+  useEffect(()=>{
+    fetchProducts()
+  },[])
   return (
     <div className="min-h-[24rem] flex items-center justify-center font-sans mt-16">
       <div className="w-full max-w-4xl px-6 text-center">
@@ -13,15 +20,7 @@ export function HeroSection() {
         <p className="text-sm text-muted-foreground mb-6 font-semibold">
           Buy and sell within your campus — simple, secure and local.
         </p>
-
-          <Card className="mx-auto max-w-xl flex flex-row p-5">
-          <Input
-            placeholder="Search products, brands or categories"
-          />
-          <Button type="submit" aria-label="Search">
-            <SearchIcon className="h-4 w-4" />
-          </Button>
-          </Card>
+        <SearchBar/>
         </div>
     </div>
   );

@@ -6,6 +6,7 @@ import AdminHomePage from './pages/AdminHomePage'
 import { ViewProduct } from './pages/ViewProduct'
 import { Profile } from './pages/Profile'
 import { Layout } from './components/Layout'
+import { Products } from './pages/Products'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
             <Route path='/admin' element={<AdminHomePage />} />
             <Route path='/product/:id' element={<ViewProduct />} />
             <Route path='/profile/:tab' element={<Profile />} />
+            <Route path='/products' element={<Products />} />
           </Route>
       </Routes>
     </BrowserRouter>

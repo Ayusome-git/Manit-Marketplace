@@ -127,8 +127,8 @@ export function AddProduct() {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Product Category <span className="text-red-400">*</span></SelectLabel>
-                <SelectItem value="electronics">Electronics</SelectItem>
-                <SelectItem value="stationary">Stationary</SelectItem>
+                <SelectItem value="electronics">Electronics & Gadget</SelectItem>
+                <SelectItem value="stationary">Stationary & Books</SelectItem>
                 <SelectItem value="appliances">Appliances</SelectItem>
                 <SelectItem value="cycle">Cycle</SelectItem>
                 <SelectItem value="bike">Bike</SelectItem>

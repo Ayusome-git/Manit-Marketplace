@@ -24,7 +24,7 @@ interface Product {
   seller:Seller
 }
 interface ProductState {
-  products: Product[];
+  Products: Product[];
   featuredProducts: Product[];
   MyProducts: Product[];
   RecentProducts:Product[];
@@ -42,7 +42,7 @@ interface ProductState {
 }
 
 export const useProductStore = create<ProductState>((set) => ({
-  products: [],
+  Products: [],
   product:null,
   featuredProducts: [],
   RecentProducts:[],
@@ -57,8 +57,8 @@ export const useProductStore = create<ProductState>((set) => ({
       if(res.status!==200){
         throw new Error("Something went wrong!");
       }
-      const productsArray = res.data as Product[];
-      set({ products: productsArray, loading: false });
+      const Products = res.data as Product[];
+      set({ Products, loading: false });
     } catch (err: any) {
       set({ error: err.message || "Failed to fetch products", loading: false });
     }
@@ -135,7 +135,7 @@ export const useProductStore = create<ProductState>((set) => ({
       console.log(data);
       const newProduct = data.response;
       set((state) => ({
-        products: [...state.products, newProduct],
+        products: [...state.Products, newProduct],
         loading: false,
       }));
     } catch (err: any) {
@@ -146,7 +146,7 @@ export const useProductStore = create<ProductState>((set) => ({
     try {
       await axiosClient.post(`/product/${id}/viewCount`);
       set((state) => ({
-        products: state.products.map((p) =>
+        products: state.Products.map((p) =>
           p.productId === id ? { ...p, viewCount: p.viewCount + 1 } : p
         ),
         featuredProducts: state.featuredProducts.map((p) =>
