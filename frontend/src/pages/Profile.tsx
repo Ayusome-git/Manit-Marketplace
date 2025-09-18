@@ -1,6 +1,3 @@
-import App from "@/App";
-import { Appbar } from "@/components/Appbar";
-import { Footer } from "@/components/Footer";
 import { ProfileTab } from "@/components/Profile-tab";
 
 

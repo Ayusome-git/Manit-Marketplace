@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Card } from "./ui/card"
 import { useProductStore } from "@/store/useProductStore";
-import { ArrowRight } from "lucide-react";
 import { ProductCard } from "./ProductCard";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "./ui/button";

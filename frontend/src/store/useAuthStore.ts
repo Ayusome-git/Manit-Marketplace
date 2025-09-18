@@ -35,23 +35,19 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-
       if (!user.email?.endsWith("@stu.manit.ac.in")) {
         alert("Only MANIT accounts are authorized");
         return;
       }
-
       const username = user.displayName!;
       const email = user.email!;
       const userId = email.split("@")[0];
       const hostelNo=null
       const phoneNo=null
-
-      await axiosClient.post("/user/signin", { username, email, userId });
-
       const token = await user.getIdToken();
-      set({ user: { username, email, userId,hostelNo,phoneNo }, token });
       localStorage.setItem("token",token);
+      await axiosClient.post("/user/signin", { username, email, userId });
+      set({ user: { username, email, userId,hostelNo,phoneNo }, token });
     } catch (err: any) {
       if (err.code === "auth/popup-closed-by-user") {
         alert("Login popup was closed by the user.");

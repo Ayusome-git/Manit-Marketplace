@@ -5,13 +5,14 @@ import { authmiddleware } from '../middleware/authmiddleware';
 const app = express();
 const client=new PrismaClient();
 
-app.post("/signin",async(req,res)=>{
+app.post("/signin",authmiddleware,async(req,res)=>{
     const email = req.body.email;
     const username = req.body.name;
-    const id=req.body.id;
+    //@ts-ignore
+    const id=req.id;
     const userExist= await client.user.findFirst({
         where:{
-            email:email
+            userId:id
         }
     })
     try{
