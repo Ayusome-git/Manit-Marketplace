@@ -3,9 +3,11 @@ import { ProductCard } from "./ProductCard";
 import { useEffect } from "react";
 import { useProductStore } from "../store/useProductStore";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function FeaturedProducts() {
   const { featuredProducts, fetchFeaturedProducts, loading, error } = useProductStore();
+  
   const nav = useNavigate()
 
   useEffect(() => {

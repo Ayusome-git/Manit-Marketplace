@@ -11,11 +11,16 @@ import Autoplay from "embla-carousel-autoplay";
 import React from "react";
 import { useProductStore } from "@/store/useProductStore";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface ProductImage {
   imageId: string | number;
   productId: string;
   imageUrl: string;
+}
+interface Seller{
+  userId:string
+  username:string
 }
 
 interface Product {
@@ -24,6 +29,7 @@ interface Product {
   price: number;
   viewCount: number;
   productImages: ProductImage[];
+  seller:Seller
 }
 
 interface ProductCardProps {
@@ -33,7 +39,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const plugin = React.useRef(Autoplay({ delay: 5000 }));
   const increaseCount = useProductStore((state) => state.increaseCount);
   const navigate = useNavigate();
-
+  const {user} = useAuthStore()
   const handleClick = () => {
     increaseCount(product.productId);
     navigate(`/product/${product.productId}`);
@@ -103,7 +109,12 @@ export function ProductCard({ product }: ProductCardProps) {
               <Eye className="size-5" /> {product.viewCount}
             </div>
             <div>
-              <Heart className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
+              {(
+                !user ||
+                (product.seller?.userId && user.userId && product.seller.userId !== user.userId)
+              ) && (
+                <Heart className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
+              )}
             </div>
           </div>
         </div>
