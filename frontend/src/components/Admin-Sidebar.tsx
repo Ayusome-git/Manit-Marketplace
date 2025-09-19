@@ -1,12 +1,18 @@
-
 import { Menu } from 'lucide-react'
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarTrigger } from './ui/sidebar'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarRail, SidebarTrigger } from './ui/sidebar'
 import { Separator } from './ui/separator'
 import { useAdminSectionStore } from '@/store/useAdminSections'
+import { NavUser } from './nav-user'
 
 const Adminsidebar = () => {
 
   const { setSection, toggleSection } = useAdminSectionStore();
+
+  const user = {
+    name: "Utkarsh",
+    email: "utk123@stu.manit.in",
+    avatar: "vite.svg"
+  }
 
   return (
     <>
@@ -19,21 +25,27 @@ const Adminsidebar = () => {
           </h2>
         </SidebarHeader>
         <Separator className='bg-gray-500' />
-        <SidebarContent className='p-2'>
+        <SidebarContent className='p-4'>
           <SidebarGroup>
             <h4 className='cursor-pointer'
               onClick={() => toggleSection("users")}>User Details</h4>
           </SidebarGroup>
+          <Separator className='bg-gray-500' />
           <SidebarGroup>
             <h4 className='cursor-pointer'
               onClick={() => toggleSection("products")}>Product Details</h4>
           </SidebarGroup>
+          <Separator className='bg-gray-500' />
           <SidebarGroup>
             <h4 className='cursor-pointer'
               onClick={() => toggleSection("notifications")}>Notifications</h4>
           </SidebarGroup>
+          <Separator className='bg-gray-500' />
         </SidebarContent >
-        <SidebarFooter>footer</SidebarFooter>
+        <SidebarFooter>
+          <NavUser user={user} />
+        </SidebarFooter>
+        <SidebarRail/>
       </Sidebar>
       <SidebarTrigger>
         <Menu className='h-5 w-5' />
