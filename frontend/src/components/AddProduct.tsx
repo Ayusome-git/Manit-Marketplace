@@ -85,7 +85,6 @@ export function AddProduct() {
       setProductCondition("");
       setCategory("");
       setDate(undefined);
-      setImages([null, null, null, null, null]);
     } catch (e) {
       alert("Adding product failed");
     }

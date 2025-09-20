@@ -7,7 +7,7 @@ const client=new PrismaClient();
 
 app.post("/signin",authmiddleware,async(req,res)=>{
     const email = req.body.email;
-    const username = req.body.name;
+    const username = req.body.username;
     //@ts-ignore
     const id=req.id;
     const userExist= await client.user.findFirst({
@@ -20,8 +20,8 @@ app.post("/signin",authmiddleware,async(req,res)=>{
             await client.user.create({
                 data: {
                     userId:id,
-                    email: email,
-                    username: username
+                    email,
+                    username
                 }
             })
             res.status(201).json({ message: "User created" });

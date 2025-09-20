@@ -26,7 +26,7 @@ const uploadToCloudinary = (
     const stream = cloudinary.uploader.upload_stream(
       {
         folder: "products",
-        timeout: 600000, // 60s timeout
+        timeout: 1200000, // 120s timeout
         resource_type: "image",
         public_id: filename?.split(".")[0], // optional: name without extension
       },

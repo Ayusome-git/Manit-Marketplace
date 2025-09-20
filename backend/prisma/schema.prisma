@@ -56,8 +56,8 @@ model Wishlist{
   wishlistId Int @id @default(autoincrement())
   userId String
   productId String
-  wishlistofuser User @relation("wishlistOfUser",fields: [userId], references: [userId],onDelete: Cascade)
-  wishlistedProducts Product @relation("wishlistedProducts",fields: [productId],references: [productId],onDelete: Cascade)
+  user User @relation("wishlistOfUser",fields: [userId], references: [userId],onDelete: Cascade)
+  product Product @relation("wishlistedProducts",fields: [productId],references: [productId],onDelete: Cascade)
   @@unique([userId, productId])
 }
 

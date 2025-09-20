@@ -32,7 +32,7 @@ app.post("/",authmiddleware,upload.array("images",6),uploadImageToCloudinary,asy
                 }
             }
         })
-        res.status(201).json({ message: "Product created" });
+        res.status(200).json({ message: "Product created" });
     }catch (e) {
         console.error("Error creating product:", e);
         if (e instanceof Error) {
@@ -87,11 +87,11 @@ app.get("/recent",async(req,res)=>{
 })
 app.get("/myads",authmiddleware,async(req,res)=>{
     //@ts-ignore
-    const userId=req.userId
+    const userId=req.id
     try{
         const products= await client.product.findMany({
-            where:{
-                sellerId:userId
+            where: {
+                sellerId: userId
             },
             include:{
                 productImages:true

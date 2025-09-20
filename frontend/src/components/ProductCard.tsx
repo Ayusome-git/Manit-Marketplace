@@ -12,24 +12,31 @@ import React from "react";
 import { useProductStore } from "@/store/useProductStore";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useWishlistStore } from "@/store/useWishListStore";
+import { Wishlist } from "./Wishlist";
 
 interface ProductImage {
   imageId: string | number;
   productId: string;
   imageUrl: string;
 }
-interface Seller{
-  userId:string
-  username:string
+interface Seller {
+  userId: string;
+  username: string;
 }
 
-interface Product {
+export interface Product {
   productId: string;
   name: string;
+  description: string;
+  category: string;
   price: number;
+  productCondition: string;
+  purchaseDate?: string | undefined;
   viewCount: number;
+  sellerId: string;
   productImages: ProductImage[];
-  seller:Seller
+  seller: Seller;
 }
 
 interface ProductCardProps {
@@ -39,11 +46,25 @@ export function ProductCard({ product }: ProductCardProps) {
   const plugin = React.useRef(Autoplay({ delay: 5000 }));
   const increaseCount = useProductStore((state) => state.increaseCount);
   const navigate = useNavigate();
-  const {user} = useAuthStore()
+  const { user } = useAuthStore();
+  const {
+    addToWishlist,
+    isInWishlist,
+    removeFromWishlist,
+    getWishlistItemByProductId,
+  } = useWishlistStore();
   const handleClick = () => {
     increaseCount(product.productId);
     navigate(`/product/${product.productId}`);
   };
+
+  function remove() {
+    if (!user) return;
+    const wishlistItem = getWishlistItemByProductId(user.userId, product.productId);
+    const wishlistId = wishlistItem?.wishlistId;
+    if (!wishlistId) return;
+    removeFromWishlist(wishlistId);
+  }
 
   return (
     <Card className="font-sans mb-4 p-0 px-0 pb-5">
@@ -108,14 +129,23 @@ export function ProductCard({ product }: ProductCardProps) {
             <div className="flex items-center gap-1">
               <Eye className="size-5" /> {product.viewCount}
             </div>
-            <div>
-              {(
-                !user ||
-                (product.seller?.userId && user.userId && product.seller.userId !== user.userId)
-              ) && (
-                <Heart className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
-              )}
-            </div>
+            {user && user.userId !== product.sellerId && (
+              <div>
+                {isInWishlist(product.productId) ? (
+                  <Heart
+                    onClick={() => remove()}
+                    className="size-5 cursor-pointer text-primary transition-colors fill-primary"
+                  />
+                ) : (
+                  <Heart
+                    onClick={() =>
+                      addToWishlist(user.userId, product.productId)
+                    }
+                    className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary"
+                  />
+                )}
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

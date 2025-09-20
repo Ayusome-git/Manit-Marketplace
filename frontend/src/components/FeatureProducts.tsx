@@ -4,15 +4,21 @@ import { useEffect } from "react";
 import { useProductStore } from "../store/useProductStore";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useWishlistStore } from "@/store/useWishListStore";
 
 export function FeaturedProducts() {
   const { featuredProducts, fetchFeaturedProducts, loading, error } = useProductStore();
+  const {wishlist,fetchWishlist} =useWishlistStore()
+  const{user} =useAuthStore()
   
   const nav = useNavigate()
 
   useEffect(() => {
     fetchFeaturedProducts();
-  }, [fetchFeaturedProducts]);
+    if(user){
+      fetchWishlist(user.userId)
+    }
+  }, [fetchFeaturedProducts,user]);
 
   if (loading) return <div>Loading featured products...</div>;
   if (error) return <div className="text-red-500">{error}</div>;

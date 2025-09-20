@@ -2,16 +2,16 @@ import { create } from "zustand";
 import axiosClient from "../config/axios-config";
 import { Product } from "@/components/Product";
 
-interface ProductImage {
+export interface ProductImage {
   imageId: string | number;
   productId: string;
   imageUrl: string;
 }
-interface Seller{
+export interface Seller{
   userId:string
   username:string
 }
-interface Product {
+export interface Product {
   productId: string;
   name: string;
   description: string;
@@ -20,6 +20,7 @@ interface Product {
   productCondition: string;
   purchaseDate?: string;
   viewCount:number;
+  sellerId:string
   productImages: ProductImage[];
   seller:Seller
 }
@@ -131,8 +132,11 @@ export const useProductStore = create<ProductState>((set) => ({
       const res = await axiosClient.post("/product", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      if(res.status!==200){
+        alert("failed to post ad")
+        throw new Error("Something went wrong!");
+      }
       const data = res.data as { response: Product };
-      console.log(data);
       const newProduct = data.response;
       set((state) => ({
         products: [...state.Products, newProduct],
