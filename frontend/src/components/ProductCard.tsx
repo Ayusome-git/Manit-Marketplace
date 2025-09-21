@@ -190,7 +190,7 @@ export function ProductCard({ product }: ProductCardProps) {
               </div>
             )}
             {(user && user.userId===product.sellerId) && <div className="flex gap-2 items-center">
-              <Edit className="size-5 text-primary"></Edit>
+              <Link to={`/edit/${product.productId}`}><Edit className="size-5 text-primary cursor-pointer"></Edit></Link>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Trash2 className="size-5 text-destructive hover:fill-destructive cursor-pointer"></Trash2>
@@ -206,14 +206,11 @@ export function ProductCard({ product }: ProductCardProps) {
                     <AlertDialogCancel className="cursor-pointer">
                       Cancel
                     </AlertDialogCancel>
-                    
                       <Button variant="destructive" className="cursor-pointer" onClick={()=>deleteAd(product.productId)}>Delete Ad</Button>
-                    
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
             </div>}
-            
           </div>
         </div>
       </CardContent>

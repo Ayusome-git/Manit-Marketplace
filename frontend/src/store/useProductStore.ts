@@ -41,6 +41,7 @@ interface ProductState {
   fetchProduct:(id:string)=>Promise<void>
   fetchMyProducts:()=>Promise<void>
   deleteProduct:(productId:string)=>Promise<void>
+  editProduct: (productId: string, data: FormData) => Promise<void>;
 }
 
 export const useProductStore = create<ProductState>((set,get) => ({
@@ -186,6 +187,22 @@ export const useProductStore = create<ProductState>((set,get) => ({
       });
     } catch (error) {
       set({ error: "Failed to remove from wishlist" });
+    }
+  },
+  editProduct: async (productId: string, formData: FormData) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await axiosClient.put(`/product/${productId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (res.status !== 200) {
+        throw new Error("Failed to update product");
+      }
+      set(() => ({
+        loading: false
+      }));
+    } catch (err: any) {
+      set({ error: err.message || "Failed to update product", loading: false });
     }
   },
 }));

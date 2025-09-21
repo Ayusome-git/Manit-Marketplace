@@ -1,9 +1,9 @@
-// uploadMiddleware.ts
+
 import multer from "multer";
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { Request, Response, NextFunction } from "express";
 
-//Configure cloudinary
+
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME!,
   api_key: process.env.CLOUD_KEY!,
@@ -52,21 +52,18 @@ export const uploadImageToCloudinary = async (
     const files = req.files as Express.Multer.File[];
 
     if (!files || files.length === 0) {
-      res.status(400).json({ error: "No files uploaded" });
-      return;
+      req.body.imageUrls = [];
+      return next();
     }
 
     const imageUrls: string[] = [];
 
-    //Upload sequentially to avoid timeout
     for (const file of files) {
       const result = await uploadToCloudinary(file.buffer, file.originalname);
       imageUrls.push(result.secure_url);
     }
 
-    //attach URLs to request for later use in controller
     req.body.imageUrls = imageUrls;
-
     next();
   } catch (err) {
     console.error("Upload middleware error:", err);

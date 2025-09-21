@@ -8,6 +8,7 @@ import { Profile } from './pages/Profile'
 import { Layout } from './components/Layout'
 import { Products } from './pages/Products'
 import { Toaster } from './components/ui/sonner'
+import { EditProduct } from './components/EditProduct'
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
             <Route path='/product/:id' element={<ViewProduct />} />
             <Route path='/profile/:tab' element={<Profile />} />
             <Route path='/products' element={<Products />} />
+            <Route path='/edit/:id' element={<EditProduct />} />
           </Route>
       </Routes>
     </BrowserRouter>
