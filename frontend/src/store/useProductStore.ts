@@ -40,9 +40,10 @@ interface ProductState {
   increaseCount: (id:string)=>Promise<void>;
   fetchProduct:(id:string)=>Promise<void>
   fetchMyProducts:()=>Promise<void>
+  deleteProduct:(productId:string)=>Promise<void>
 }
 
-export const useProductStore = create<ProductState>((set) => ({
+export const useProductStore = create<ProductState>((set,get) => ({
   Products: [],
   product:null,
   featuredProducts: [],
@@ -160,6 +161,31 @@ export const useProductStore = create<ProductState>((set) => ({
       }));
     } catch (err: any) {
       console.error("Failed to increase product view count", err);
+    }
+  },
+  deleteProduct: async (productId) => {
+    try {
+      const response=await axiosClient.delete(`/product/${productId}`);
+      if(response.status===401){
+        throw new Error("Unauthorized")
+      }
+      if(response.status!==200){
+        throw new Error("Something went wrong!");
+      }
+      set({
+        Products: get().Products.filter((item)=>item.productId!==productId)
+      });
+      set({
+        MyProducts: get().MyProducts.filter((item)=>item.productId!==productId)
+      });
+      set({
+        featuredProducts: get().featuredProducts.filter((item)=>item.productId!==productId)
+      });
+      set({
+        RecentProducts: get().RecentProducts.filter((item)=>item.productId!==productId)
+      });
+    } catch (error) {
+      set({ error: "Failed to remove from wishlist" });
     }
   },
 }));

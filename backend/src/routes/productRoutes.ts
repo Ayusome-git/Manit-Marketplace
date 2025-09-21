@@ -125,14 +125,15 @@ app.get("/:id",async(req,res)=>{
     }
 })
 
-app.delete("/:id",authmiddleware,async(req,res)=>{
+app.delete("/:productId",authmiddleware,async(req,res)=>{
     //@ts-ignore
     const userId= req.id
-    const productId=req.params.id
+    const productId=req.params.productId
     try{
         const response=await client.product.delete({
             where:{
-                productId
+                productId,
+                sellerId:userId
             }
         })
         res.status(200).json({message:"deleted"})
@@ -154,7 +155,6 @@ app.post("/:id/viewCount", async (req, res) => {
     res.status(500).json({ error: "Failed to update view count" });
   }
 });
-
 
 
 

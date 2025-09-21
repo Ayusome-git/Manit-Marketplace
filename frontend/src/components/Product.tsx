@@ -129,7 +129,7 @@ export function Product() {
             <div className="w-full flex justify-center text-2xl pb-2">
               Product Description
             </div>
-            <ScrollArea className="w-full h-[254px] pb-20">
+            <ScrollArea className="w-full h-[254px] pb-20 tracking-wide">
               {product.description}
             </ScrollArea>
           </CardContent>

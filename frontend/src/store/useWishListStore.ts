@@ -45,11 +45,11 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
   addToWishlist: async (userId, productId) => {
     try {
-      const { data } = await axiosClient.post<WishlistItem>("/wishlist", {
+      const response = await axiosClient.post<WishlistItem>("/wishlist", {
         userId,
         productId,
       });
-      if(!data){
+      if(response.status!==200){
         throw new Error("Something went wrong!");
       }
       await get().fetchWishlist(userId);
@@ -60,7 +60,10 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
   removeFromWishlist: async (wishlistId) => {
     try {
-      await axiosClient.delete(`/wishlist/${wishlistId}`);
+      const response=await axiosClient.delete(`/wishlist/${wishlistId}`);
+      if(response.status!==200){
+        throw new Error("Something went wrong!");
+      }
       set({
         wishlist: get().wishlist.filter((item) => item.wishlistId !== wishlistId),
       });

@@ -7,15 +7,18 @@ import { ViewProduct } from './pages/ViewProduct'
 import { Profile } from './pages/Profile'
 import { Layout } from './components/Layout'
 import { Products } from './pages/Products'
+import { Toaster } from './components/ui/sonner'
 
 function App() {
 
 
   return (
     <ThemeProvider defaultTheme='dark' storageKey="vite-ui-theme">
+    
     <BrowserRouter>
+    <Toaster richColors={true} position='bottom-right' invert={true}/>
       <Routes>
-        <Route element={<Layout />}>
+        <Route element={<Layout />} >
             <Route path='/' element={<Homepage />} />
             <Route path='/admin' element={<AdminHomePage />} />
             <Route path='/product/:id' element={<ViewProduct />} />

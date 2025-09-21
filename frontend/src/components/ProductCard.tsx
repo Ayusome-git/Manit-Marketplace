@@ -1,4 +1,4 @@
-import { Eye, Heart, MapPin } from "lucide-react";
+import { CircleAlert, Edit, Eye, Heart, MapPin, Trash2 } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import {
   Carousel,
@@ -13,6 +13,18 @@ import { useProductStore } from "@/store/useProductStore";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useWishlistStore } from "@/store/useWishListStore";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import { Button } from "./ui/button";
 import { Wishlist } from "./Wishlist";
 
 interface ProductImage {
@@ -47,11 +59,13 @@ export function ProductCard({ product }: ProductCardProps) {
   const increaseCount = useProductStore((state) => state.increaseCount);
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const{loading, error: productError, deleteProduct} =useProductStore()
   const {
     addToWishlist,
     isInWishlist,
     removeFromWishlist,
     getWishlistItemByProductId,
+    error: wishlistError,
   } = useWishlistStore();
   const handleClick = () => {
     increaseCount(product.productId);
@@ -60,10 +74,41 @@ export function ProductCard({ product }: ProductCardProps) {
 
   function remove() {
     if (!user) return;
-    const wishlistItem = getWishlistItemByProductId(user.userId, product.productId);
+    const wishlistItem = getWishlistItemByProductId(
+      user.userId,
+      product.productId
+    );
     const wishlistId = wishlistItem?.wishlistId;
     if (!wishlistId) return;
     removeFromWishlist(wishlistId);
+    if (wishlistError) {
+      toast(wishlistError);
+      return;
+    }
+    toast("Item Removed from WishList");
+  }
+
+  function handleAddToWishlist() {
+    if (user) {
+      addToWishlist(user.userId, product.productId);
+    }
+    if (wishlistError) {
+      toast(wishlistError);
+      return;
+    }
+    toast("Item Added to WishList");
+  }
+  function deleteAd(pid:string){
+    if(!pid){
+      toast("error");
+      return;
+    }
+    deleteProduct(pid)
+    if(productError){
+      toast(productError)
+    }
+    toast("Advertisment Deleted")
+    
   }
 
   return (
@@ -127,9 +172,9 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
           <div className="flex justify-between items-center ">
             <div className="flex items-center gap-1">
-              <Eye className="size-5" /> {product.viewCount}
+              <Eye className="size-5 text-primary"/> {product.viewCount}
             </div>
-            {user && user.userId !== product.sellerId && (
+            {(user && user.userId !== product.sellerId) && (
               <div>
                 {isInWishlist(product.productId) ? (
                   <Heart
@@ -138,14 +183,37 @@ export function ProductCard({ product }: ProductCardProps) {
                   />
                 ) : (
                   <Heart
-                    onClick={() =>
-                      addToWishlist(user.userId, product.productId)
-                    }
+                    onClick={() => handleAddToWishlist()}
                     className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary"
                   />
                 )}
               </div>
             )}
+            {(user && user.userId===product.sellerId) && <div className="flex gap-2 items-center">
+              <Edit className="size-5 text-primary"></Edit>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Trash2 className="size-5 text-destructive hover:fill-destructive cursor-pointer"></Trash2>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                      Are you sure you want to Delete Your Ad?
+                    <AlertDialogDescription className="text-destructive flex items-center gap-2">
+                     <CircleAlert/>This action is irreversible!
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="cursor-pointer">
+                      Cancel
+                    </AlertDialogCancel>
+                    
+                      <Button variant="destructive" className="cursor-pointer" onClick={()=>deleteAd(product.productId)}>Delete Ad</Button>
+                    
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>}
+            
           </div>
         </div>
       </CardContent>
