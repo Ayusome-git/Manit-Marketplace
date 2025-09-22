@@ -190,19 +190,27 @@ export const useProductStore = create<ProductState>((set,get) => ({
     }
   },
   editProduct: async (productId: string, formData: FormData) => {
-    set({ loading: true, error: null });
-    try {
-      const res = await axiosClient.put(`/product/${productId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      if (res.status !== 200) {
-        throw new Error("Failed to update product");
+  set({ loading: true, error: null });
+  try {
+    const res = await axiosClient.put(`/product/${productId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    set({ loading: false });
+  } catch (err: any) {
+    let message = "Failed to update product";
+
+    if (err.response) {
+      if (err.response.status === 401) {
+        message = "Unauthorized";
+      } else if (err.response.data?.error) {
+        message = err.response.data.error;
       }
-      set(() => ({
-        loading: false
-      }));
-    } catch (err: any) {
-      set({ error: err.message || "Failed to update product", loading: false });
+    } else if (err.message) {
+      message = err.message;
     }
-  },
+
+    set({ error: message, loading: false });
+    throw new Error(message);
+  }
+},
 }));

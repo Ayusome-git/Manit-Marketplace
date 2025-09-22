@@ -113,14 +113,11 @@ export function EditProduct() {
       if(id){
         await editProduct(id, formData);
       }
-      if(error){
-        toast(error);
-        return;
-      }
-      toast("update successfull")
-      
-    } catch (e) {
-      alert("Updating product failed");
+      toast.success("update successfull")
+    } catch (e:any) {
+      const message =
+      e?.message || e?.response?.data?.error || "Failed to update product";
+    toast.error(message);
     }
   }
 
@@ -291,7 +288,8 @@ export function EditProduct() {
             </div>
           ))}
         </div>
-        <div className="items-center justify-center w-full flex">
+        <div className="items-center justify-center w-full flex gap-5">
+        <Button onClick={()=>navigate("/")}variant="secondary" >Cancle</Button>
           {loading ? (
             <Button variant="destructive" className="cursor-not-allowed">Updating...</Button>
           ) : (
