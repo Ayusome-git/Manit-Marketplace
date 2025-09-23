@@ -37,7 +37,7 @@ export function MyProfile(){
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between flex-col md:flex-row">
         <div className="gap-5 ">
           <Label className="px-1 text-lg py-1">
             Display Name
@@ -57,7 +57,7 @@ export function MyProfile(){
           <Input
             type="text"
             disabled
-            className="hover:cursor-not-allowed h-20 md:text-2xl text-center w-lg"
+            className="hover:cursor-not-allowed h-20 md:text-2xl text-center md:w-lg"
             placeholder="Email"
             value={user?.email}
           ></Input>

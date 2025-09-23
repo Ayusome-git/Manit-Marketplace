@@ -2,16 +2,16 @@ import { create } from "zustand";
 import axiosClient from "../config/axios-config";
 import { Product } from "@/components/Product";
 
-interface ProductImage {
+export interface ProductImage {
   imageId: string | number;
   productId: string;
   imageUrl: string;
 }
-interface Seller{
+export interface Seller{
   userId:string
   username:string
 }
-interface Product {
+export interface Product {
   productId: string;
   name: string;
   description: string;
@@ -20,13 +20,15 @@ interface Product {
   productCondition: string;
   purchaseDate?: string;
   viewCount:number;
+  sellerId:string
   productImages: ProductImage[];
   seller:Seller
 }
 interface ProductState {
-  products: Product[];
+  Products: Product[];
   featuredProducts: Product[];
   MyProducts: Product[];
+  RecentProducts:Product[];
   product:Product | null
   loading: boolean;
   error: string | null;
@@ -34,15 +36,19 @@ interface ProductState {
   fetchProducts: () => Promise<void>;
   addProduct: (data: FormData) => Promise<void>;
   fetchFeaturedProducts: ()=>Promise<void>;
+  fetchRecentProducts:()=>Promise<void>;
   increaseCount: (id:string)=>Promise<void>;
   fetchProduct:(id:string)=>Promise<void>
   fetchMyProducts:()=>Promise<void>
+  deleteProduct:(productId:string)=>Promise<void>
+  editProduct: (productId: string, data: FormData) => Promise<void>;
 }
 
-export const useProductStore = create<ProductState>((set) => ({
-  products: [],
+export const useProductStore = create<ProductState>((set,get) => ({
+  Products: [],
   product:null,
   featuredProducts: [],
+  RecentProducts:[],
   MyProducts:[],
   loading: false,
   error: null,
@@ -54,8 +60,8 @@ export const useProductStore = create<ProductState>((set) => ({
       if(res.status!==200){
         throw new Error("Something went wrong!");
       }
-      const productsArray = res.data as Product[];
-      set({ products: productsArray, loading: false });
+      const Products = res.data as Product[];
+      set({ Products, loading: false });
     } catch (err: any) {
       set({ error: err.message || "Failed to fetch products", loading: false });
     }
@@ -106,17 +112,36 @@ export const useProductStore = create<ProductState>((set) => ({
       set({ error: err.message || "Failed to fetch featured products", loading: false });
     }
   },
+   fetchRecentProducts: async () => {
+    set({ loading: true, error: null });
+    try {
+      const res = await axiosClient.get("/product/recent");
+      
+      if(res.status!==200){
+        throw new Error("Something went wrong!");
+      }
+      
+      const RecentProducts = res.data as Product[];
+      set({ RecentProducts, loading: false });
+    } catch (err: any) {
+      set({ error: err.message || "Failed to fetch featured products", loading: false });
+    }
+  },
+  
   addProduct: async (formData) => {
     set({ loading: true, error: null });
     try {
       const res = await axiosClient.post("/product", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      if(res.status!==200){
+        alert("failed to post ad")
+        throw new Error("Something went wrong!");
+      }
       const data = res.data as { response: Product };
-      console.log(data);
       const newProduct = data.response;
       set((state) => ({
-        products: [...state.products, newProduct],
+        products: [...state.Products, newProduct],
         loading: false,
       }));
     } catch (err: any) {
@@ -127,7 +152,7 @@ export const useProductStore = create<ProductState>((set) => ({
     try {
       await axiosClient.post(`/product/${id}/viewCount`);
       set((state) => ({
-        products: state.products.map((p) =>
+        products: state.Products.map((p) =>
           p.productId === id ? { ...p, viewCount: p.viewCount + 1 } : p
         ),
         featuredProducts: state.featuredProducts.map((p) =>
@@ -139,4 +164,53 @@ export const useProductStore = create<ProductState>((set) => ({
       console.error("Failed to increase product view count", err);
     }
   },
+  deleteProduct: async (productId) => {
+    try {
+      const response=await axiosClient.delete(`/product/${productId}`);
+      if(response.status===401){
+        throw new Error("Unauthorized")
+      }
+      if(response.status!==200){
+        throw new Error("Something went wrong!");
+      }
+      set({
+        Products: get().Products.filter((item)=>item.productId!==productId)
+      });
+      set({
+        MyProducts: get().MyProducts.filter((item)=>item.productId!==productId)
+      });
+      set({
+        featuredProducts: get().featuredProducts.filter((item)=>item.productId!==productId)
+      });
+      set({
+        RecentProducts: get().RecentProducts.filter((item)=>item.productId!==productId)
+      });
+    } catch (error) {
+      set({ error: "Failed to remove from wishlist" });
+    }
+  },
+  editProduct: async (productId: string, formData: FormData) => {
+  set({ loading: true, error: null });
+  try {
+    const res = await axiosClient.put(`/product/${productId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    set({ loading: false });
+  } catch (err: any) {
+    let message = "Failed to update product";
+
+    if (err.response) {
+      if (err.response.status === 401) {
+        message = "Unauthorized";
+      } else if (err.response.data?.error) {
+        message = err.response.data.error;
+      }
+    } else if (err.message) {
+      message = err.message;
+    }
+
+    set({ error: message, loading: false });
+    throw new Error(message);
+  }
+},
 }));

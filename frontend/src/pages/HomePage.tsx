@@ -1,19 +1,18 @@
 
-import { Appbar } from "@/components/Appbar";
 import { FeaturedProducts } from "@/components/FeatureProducts";
+
 import { HeroSection } from "@/components/HeroSection";
-import { ProductCard } from "@/components/ProductCard";
-import axios from "axios";
+
+import { RecentlyAdded } from "@/components/RecentlyAdded";
+
+
 
 export function Homepage() {
-
   return (
     <div>
-    <div className="flex justify-center">
-      <Appbar/>
-    </div>
     <div><HeroSection/></div>
-    <div><FeaturedProducts count={8} /></div>
+    <div><FeaturedProducts/></div>
+    <div><RecentlyAdded/></div>
     </div>
   );
 }
