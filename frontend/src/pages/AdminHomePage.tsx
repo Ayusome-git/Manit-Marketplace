@@ -63,12 +63,12 @@ export default function AdminHomePage() {
         <div className="flex-1 p-4">
           {/* Dashboard (default view when no section is open) */}
           {!openSection ? (
-            <div className="h-[300px] w-full p-4 border border-yellow-300 mb-4">
+            <div className="h-[400px] w-full p-4 border border-yellow-300 mb-4">
               <AdminDashboard user_data={user_data} product_data={product_data}/>
             </div>
           ) : (
             <>
-              <div className="h-[300px] w-full p-4 border border-yellow-300 mb-4">
+              <div className="h-[400px] w-full p-4 border border-yellow-300 mb-4">
 
               </div>
             </>

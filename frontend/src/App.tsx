@@ -6,7 +6,6 @@ import AdminHomePage from './pages/AdminHomePage'
 import { PostProduct } from './pages/PostProduct'
 import { ViewProduct } from './pages/ViewProduct'
 import { Profile } from './pages/Profile'
-// import { AdminRoutes } from './routes/AdminRoutes'
 
 function App() {
 
@@ -20,8 +19,6 @@ function App() {
         <Route path='/product/:id' element={<ViewProduct/>}/>
         <Route path='/profile/:tab' element={<Profile/>}/>
 
-        {/* admin routes */}
-        {/* {AdminRoutes} */}
       </Routes>
     </BrowserRouter>
     </ThemeProvider>
