@@ -85,7 +85,6 @@ export function AddProduct() {
       setProductCondition("");
       setCategory("");
       setDate(undefined);
-      setImages([null, null, null, null, null]);
     } catch (e) {
       alert("Adding product failed");
     }
@@ -127,11 +126,13 @@ export function AddProduct() {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Product Category <span className="text-red-400">*</span></SelectLabel>
-                <SelectItem value="electronics">Electronics</SelectItem>
-                <SelectItem value="stationary">Stationary</SelectItem>
-                <SelectItem value="appliances">Appliances</SelectItem>
+                <SelectItem value="electronics">Electronics & Gadget</SelectItem>
+                <SelectItem value="stationary">Stationary & Books</SelectItem>
                 <SelectItem value="cycle">Cycle</SelectItem>
-                <SelectItem value="bike">Bike</SelectItem>
+                <SelectItem value="furniture">Furniture</SelectItem>
+                <SelectItem value="sports">Sports & Fitness</SelectItem>
+                <SelectItem value="kitchen">Kitchen & Dining</SelectItem>
+                <SelectItem value="health">Health & Beauty</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

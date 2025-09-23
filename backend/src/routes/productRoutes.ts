@@ -32,7 +32,7 @@ app.post("/",authmiddleware,upload.array("images",6),uploadImageToCloudinary,asy
                 }
             }
         })
-        res.status(201).json({ message: "Product created" });
+        res.status(200).json({ message: "Product created" });
     }catch (e) {
         console.error("Error creating product:", e);
         if (e instanceof Error) {
@@ -42,7 +42,57 @@ app.post("/",authmiddleware,upload.array("images",6),uploadImageToCloudinary,asy
         }
     }
 })
+app.put("/:productId", authmiddleware, upload.array("images", 6), uploadImageToCloudinary, async (req, res) => {
+    const productId = req.params.productId;
+    //@ts-ignore
+    const userId = req.id;
+    let existingImages = req.body.existingImages || [];
+    if (typeof existingImages === "string") existingImages = [existingImages];
+    let imageUrls = req.body.imageUrls;
+    if (!imageUrls) {
+      imageUrls = [];
+    } else if (typeof imageUrls === "string") {
+      imageUrls = imageUrls ? [imageUrls] : [];
+    }
+    imageUrls = imageUrls.filter((url:string) => url && url.trim() !== "");
 
+    try {
+        const product = await client.product.findUnique({
+            where: { productId, sellerId: userId },
+            include: { productImages: true },
+        });
+        if (!product) {
+          res.status(404).json({ message: "Product not found" });
+          return;
+        }
+        const imagesToDelete = product.productImages.filter(
+            (img) => !existingImages.includes(img.imageUrl)
+        );
+        await client.productImage.deleteMany({
+            where: { imageId: { in: imagesToDelete.map((img) => img.imageId) } },
+        });
+
+        const updatedProduct = await client.product.update({
+            where: { productId, sellerId: userId },
+            data: {
+                name: req.body.name,
+                description: req.body.description,
+                category: req.body.category,
+                price: parseInt(req.body.price),
+                productCondition: req.body.productCondition,
+                productImages: imageUrls.length
+                  ? { create: imageUrls.map((url:string) => ({ imageUrl: url })) }
+                  : undefined,
+            },
+            include: { productImages: true },
+        });
+
+        res.status(200).json(updatedProduct);
+    } catch (e) {
+        console.error(e);
+        res.status(400).json({ message: "Failed to update Product" });
+    }
+})
 app.get("/all",async(req,res)=>{
     try{
         const response=await client.product.findMany({
@@ -50,7 +100,7 @@ app.get("/all",async(req,res)=>{
                 productImages:true
             }
         })
-        res.json(response)
+        res.status(200).json(response)
     }catch(e){
         res.status(404).json({message:"not found"})
     }
@@ -70,13 +120,28 @@ app.get("/featured",async(req,res)=>{
         res.status(404).json({message:"not found"})
     }
 })
+app.get("/recent",async(req,res)=>{
+    try{
+        const response=await client.product.findMany({
+            orderBy:{listedAt:"desc"},
+            take:8,
+            include:{
+                productImages:true
+            }
+        })
+        
+        res.status(200).json(response)
+    }catch(e){
+        res.status(404).json({message:"not found"})
+    }
+})
 app.get("/myads",authmiddleware,async(req,res)=>{
     //@ts-ignore
-    const userId=req.userId
+    const userId=req.id
     try{
         const products= await client.product.findMany({
-            where:{
-                sellerId:userId
+            where: {
+                sellerId: userId
             },
             include:{
                 productImages:true
@@ -110,14 +175,15 @@ app.get("/:id",async(req,res)=>{
     }
 })
 
-app.delete("/:id",authmiddleware,async(req,res)=>{
+app.delete("/:productId",authmiddleware,async(req,res)=>{
     //@ts-ignore
     const userId= req.id
-    const productId=req.params.id
+    const productId=req.params.productId
     try{
         const response=await client.product.delete({
             where:{
-                productId
+                productId,
+                sellerId:userId
             }
         })
         res.status(200).json({message:"deleted"})
@@ -139,7 +205,6 @@ app.post("/:id/viewCount", async (req, res) => {
     res.status(500).json({ error: "Failed to update view count" });
   }
 });
-
 
 
 

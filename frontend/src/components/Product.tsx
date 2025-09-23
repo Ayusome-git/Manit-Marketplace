@@ -15,11 +15,13 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "./ui/badge";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function Product() {
   const { fetchProduct, product, loading, error } = useProductStore();
+  const { user } = useAuthStore();
   const { id } = useParams<{ id: string }>();
-  const isMobile =useIsMobile()
+  const isMobile = useIsMobile();
   useEffect(() => {
     if (id) {
       fetchProduct(id);
@@ -33,43 +35,48 @@ export function Product() {
     <div className="grid grid-cols-1 md:grid-cols-7 px-5 sm:gap-4 font-sans">
       <div className="md:col-span-3 md:col-start-2">
         <Card>
-        <Carousel className="w-full max-w-lg mx-auto">
-          <CarouselContent>
-            {product.productImages.length > 0 ? (
-              product.productImages.map((img, index) => (
-                <CarouselItem key={index}>
-                  <div className="p-1 justify-center items-center flex mb-1">
-                    <div className="flex aspect-square items-center justify-center ">
-                      <img
-                        src={img.imageUrl}
-                        alt={product.name}
-                        className="overflow-hidden h-full w-full"
-                      />
+          <Carousel className="w-full max-w-lg mx-auto">
+            <CarouselContent>
+              {product.productImages.length > 0 ? (
+                product.productImages.map((img, index) => (
+                  <CarouselItem key={index}>
+                    <div className="p-1 justify-center items-center flex mb-1">
+                      <div className="flex aspect-square items-center justify-center ">
+                        <img
+                          src={img.imageUrl}
+                          alt={product.name}
+                          className="overflow-hidden h-full w-full"
+                        />
+                      </div>
                     </div>
+                  </CarouselItem>
+                ))
+              ) : (
+                <CarouselItem>
+                  <div className="p-1">
+                    <Card>
+                      <CardContent className="flex aspect-square items-center justify-center p-6 max-h-56">
+                        No Image
+                      </CardContent>
+                    </Card>
                   </div>
                 </CarouselItem>
-              ))
-            ) : (
-              <CarouselItem>
-                <div className="p-1">
-                  <Card>
-                    <CardContent className="flex aspect-square items-center justify-center p-6 max-h-56">
-                      No Image
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
+              )}
+            </CarouselContent>
+            {!isMobile && (
+              <>
+                <CarouselPrevious className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
+                <CarouselNext className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
+              </>
             )}
-          </CarouselContent>
-          {!isMobile && (<><CarouselPrevious className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" /><CarouselNext className="cursor-pointer hover:text-primary transition-colors hover:fill-primary" /></>)}
-        </Carousel>
+          </Carousel>
         </Card>
         <Card className="mt-5">
-            <CardContent className="flex gap-5">
-                <Badge >{product.category}</Badge>
-                <Badge variant="secondary">{product.productCondition}</Badge>
-                <Badge variant="secondary">{2024}</Badge>
-            </CardContent>
+          <CardContent className="flex gap-5">
+            <Badge>{product.category}</Badge>
+            <Badge variant="secondary">{product.productCondition}</Badge>
+            <Badge variant="secondary">{2024}</Badge>
+          </CardContent>
         </Card>
       </div>
       <div className="md:col-span-2 md:col-start-5 mt-5 sm:mt-0 ">
@@ -82,7 +89,12 @@ export function Product() {
                 <Eye className="size-5" /> {product.viewCount}
               </div>
               <div>
-                <Heart className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
+                {(!user ||
+                  (product.seller?.userId &&
+                    user.userId &&
+                    product.seller.userId !== user.userId)) && (
+                  <Heart className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
+                )}
               </div>
             </div>
             <div className="flex items-center gap-1 justify-center w-full">
@@ -117,7 +129,7 @@ export function Product() {
             <div className="w-full flex justify-center text-2xl pb-2">
               Product Description
             </div>
-            <ScrollArea className="w-full h-[254px] pb-20">
+            <ScrollArea className="w-full h-[254px] pb-20 tracking-wide">
               {product.description}
             </ScrollArea>
           </CardContent>

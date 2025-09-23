@@ -11,7 +11,7 @@ export function ViewProduct(){
         <div className="mt-40">
         <Product/>
         <div className="mt-15">
-        <FeaturedProducts count={4}/>
+        <FeaturedProducts />
         </div>
 
         </div>
