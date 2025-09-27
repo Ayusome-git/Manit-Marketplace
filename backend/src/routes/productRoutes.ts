@@ -42,57 +42,6 @@ app.post("/",authmiddleware,upload.array("images",6),uploadImageToCloudinary,asy
         }
     }
 })
-app.put("/:productId", authmiddleware, upload.array("images", 6), uploadImageToCloudinary, async (req, res) => {
-    const productId = req.params.productId;
-    //@ts-ignore
-    const userId = req.id;
-    let existingImages = req.body.existingImages || [];
-    if (typeof existingImages === "string") existingImages = [existingImages];
-    let imageUrls = req.body.imageUrls;
-    if (!imageUrls) {
-      imageUrls = [];
-    } else if (typeof imageUrls === "string") {
-      imageUrls = imageUrls ? [imageUrls] : [];
-    }
-    imageUrls = imageUrls.filter((url:string) => url && url.trim() !== "");
-
-    try {
-        const product = await client.product.findUnique({
-            where: { productId, sellerId: userId },
-            include: { productImages: true },
-        });
-        if (!product) {
-          res.status(404).json({ message: "Product not found" });
-          return;
-        }
-        const imagesToDelete = product.productImages.filter(
-            (img) => !existingImages.includes(img.imageUrl)
-        );
-        await client.productImage.deleteMany({
-            where: { imageId: { in: imagesToDelete.map((img) => img.imageId) } },
-        });
-
-        const updatedProduct = await client.product.update({
-            where: { productId, sellerId: userId },
-            data: {
-                name: req.body.name,
-                description: req.body.description,
-                category: req.body.category,
-                price: parseInt(req.body.price),
-                productCondition: req.body.productCondition,
-                productImages: imageUrls.length
-                  ? { create: imageUrls.map((url:string) => ({ imageUrl: url })) }
-                  : undefined,
-            },
-            include: { productImages: true },
-        });
-
-        res.status(200).json(updatedProduct);
-    } catch (e) {
-        console.error(e);
-        res.status(400).json({ message: "Failed to update Product" });
-    }
-})
 app.get("/all",async(req,res)=>{
     try{
         const response=await client.product.findMany({
@@ -205,7 +154,54 @@ app.post("/:id/viewCount", async (req, res) => {
     res.status(500).json({ error: "Failed to update view count" });
   }
 });
-
+app.put("/:productId", authmiddleware, upload.array("images", 6), uploadImageToCloudinary, async (req, res) => {
+    const productId = req.params.productId;
+    //@ts-ignore
+    const userId = req.id;
+    let existingImages = req.body.existingImages || [];
+    if (typeof existingImages === "string") existingImages = [existingImages];
+    let imageUrls = req.body.imageUrls;
+    if (!imageUrls) {
+      imageUrls = [];
+    } else if (typeof imageUrls === "string") {
+      imageUrls = imageUrls ? [imageUrls] : [];
+    }
+    imageUrls = imageUrls.filter((url:string) => url && url.trim() !== "");
+    try {
+        const product = await client.product.findUnique({
+            where: { productId, sellerId: userId },
+            include: { productImages: true },
+        });
+        if (!product) {
+          res.status(404).json({ message: "Product not found" });
+          return;
+        }
+        const imagesToDelete = product.productImages.filter(
+            (img) => !existingImages.includes(img.imageUrl)
+        );
+        await client.productImage.deleteMany({
+            where: { imageId: { in: imagesToDelete.map((img) => img.imageId) } },
+        });
+        const updatedProduct = await client.product.update({
+            where: { productId, sellerId: userId },
+            data: {
+                name: req.body.name,
+                description: req.body.description,
+                category: req.body.category,
+                price: parseInt(req.body.price),
+                productCondition: req.body.productCondition,
+                productImages: imageUrls.length
+                  ? { create: imageUrls.map((url:string) => ({ imageUrl: url })) }
+                  : undefined,
+            },
+            include: { productImages: true },
+        });
+        res.status(200).json(updatedProduct);
+    } catch (e) {
+        console.error(e);
+        res.status(400).json({ message: "Failed to update Product" });
+    }
+})
 
 
 export default app;

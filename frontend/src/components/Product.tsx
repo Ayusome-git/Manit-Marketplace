@@ -16,6 +16,7 @@ import { useParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "./ui/badge";
 import { useAuthStore } from "@/store/useAuthStore";
+import { ImageZoom } from "./ui/shadcn-io/image-zoom";
 
 export function Product() {
   const { fetchProduct, product, loading, error } = useProductStore();
@@ -41,13 +42,15 @@ export function Product() {
                 product.productImages.map((img, index) => (
                   <CarouselItem key={index}>
                     <div className="p-1 justify-center items-center flex mb-1">
+                      <ImageZoom>
                       <div className="flex aspect-square items-center justify-center ">
                         <img
                           src={img.imageUrl}
                           alt={product.name}
-                          className="overflow-hidden h-full w-full"
+                          className="overflow-hidden h-full w-full object-cover"
                         />
                       </div>
+                        </ImageZoom>
                     </div>
                   </CarouselItem>
                 ))

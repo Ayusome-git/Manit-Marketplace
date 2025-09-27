@@ -82,10 +82,10 @@ export function ProductCard({ product }: ProductCardProps) {
     if (!wishlistId) return;
     removeFromWishlist(wishlistId);
     if (wishlistError) {
-      toast(wishlistError);
+      toast.error(wishlistError);
       return;
     }
-    toast("Item Removed from WishList");
+    toast.warning("Item Removed from WishList");
   }
 
   function handleAddToWishlist() {
@@ -93,14 +93,14 @@ export function ProductCard({ product }: ProductCardProps) {
       addToWishlist(user.userId, product.productId);
     }
     if (wishlistError) {
-      toast(wishlistError);
+      toast.error(wishlistError);
       return;
     }
-    toast("Item Added to WishList");
+    toast.success("Item Added to WishList");
   }
   function deleteAd(pid:string){
     if(!pid){
-      toast("error");
+      toast.error("error");
       return;
     }
     deleteProduct(pid)
