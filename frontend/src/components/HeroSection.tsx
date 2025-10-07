@@ -12,7 +12,7 @@ export function HeroSection() {
     "https://res.cloudinary.com/deo1sywlo/image/upload/v1757395048/products/IMG_9915.jpg";
 
   return (
-    <div className="relative min-h-[35rem] flex items-center justify-center font-sans mt-12 overflow-hidden mb-10">
+    <div className="relative min-h-[35rem] flex items-center justify-center font-sans mt-12 mb-10">
       <div
         className="absolute inset-0 -z-10 bg-cover bg-center"
         style={{ backgroundImage: `url("${HERO_BG}")` }}
