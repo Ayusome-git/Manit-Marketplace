@@ -83,7 +83,7 @@ export function Appbar() {
         </Card>
       ) : (
         <Card className="w-full flex flex-row border-none items-center rounded-none justify-between py-3 px-6 font-sans fixed top-0 z-50 shadow-md ">
-          <div className="font-bold text-2xl hover:text-primary transition-colors cursor-pointer" onClick={()=>nav("/")}>Manit Marketplace</div>
+          <div className="font-bold text-2xl hover:text-primary transition-colors cursor-pointer caret-transparent"  onClick={()=>nav("/")}>Manit Marketplace</div>
           <div className="flex items-center gap-5">
             <ModeToggle />
             <DropdownMenu>

@@ -15,6 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog"
+import { Spinner } from "./ui/spinner"
 
 export function MyProfile(){
     const{user, login, logout} = useAuthStore()
@@ -34,7 +35,7 @@ export function MyProfile(){
                   src="https://github.com/shadcn.png"
                   alt="@shadcn"
                 />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback><Spinner/></AvatarFallback>
               </Avatar>
         </div>
         <div className="flex justify-between flex-col md:flex-row">
