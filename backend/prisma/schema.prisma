@@ -8,39 +8,41 @@ datasource db {
 }
 
 model User {
-  userId          String    @id
-  email           String    @unique
+  userId          String         @id
+  email           String         @unique
   username        String
-  phoneNo         String?   @unique
+  phoneNo         String?        @unique
   hostelNo        Int?
-  products        Product[] @relation("UserProducts")
-  ratingsGiven    Rating[]  @relation("RatedBy")
-  ratingsReceived Rating[]  @relation("RatedTo")
-  wishlist        Wishlist[]@relation("wishlistOfUser") 
-  notification    Notification[]@relation("userNotification")
-  senderUser      Chat[]    @relation("senderUser")
-  receiverUser    Chat[]    @relation("receiverUser")
+  products        Product[]      @relation("UserProducts")
+  ratingsGiven    Rating[]       @relation("RatedBy")
+  ratingsReceived Rating[]       @relation("RatedTo")
+  wishlist        Wishlist[]     @relation("wishlistOfUser")
+  notification    Notification[] @relation("userNotification")
+  user1Chats      Chat[]         @relation("User1Chats")
+  user2Chats      Chat[]         @relation("User2Chats")
+  messagesSent    ChatMessage[]
 }
 
 model Product {
-  productId        String      @id @default(uuid())
-  category         String
-  name             String
-  description      String     @db.Text
-  price            Int
-  productCondition String
-  viewCount           Int        @default(0)
-  listedAt         DateTime @default(now())
-  seller           User     @relation("UserProducts", fields: [sellerId], references: [userId],onDelete: Cascade)
-  sellerId         String
-  wishlistedProducts Wishlist[]@relation("wishlistedProducts")
-  productImages ProductImage[]@relation("productImg")
+  productId          String         @id @default(uuid())
+  category           String
+  name               String
+  description        String         @db.Text
+  price              Int
+  productCondition   String
+  viewCount          Int            @default(0)
+  listedAt           DateTime       @default(now())
+  seller             User           @relation("UserProducts", fields: [sellerId], references: [userId], onDelete: Cascade)
+  sellerId           String
+  wishlistedProducts Wishlist[]     @relation("wishlistedProducts")
+  productImages      ProductImage[] @relation("productImg")
 }
+
 model ProductImage {
-  imageId Int @id @default(autoincrement())
-  productId String
-  imageUrl String
-  productImg Product @relation("productImg",fields: [productId], references: [productId],onDelete: Cascade)
+  imageId    Int     @id @default(autoincrement())
+  productId  String
+  imageUrl   String
+  productImg Product @relation("productImg", fields: [productId], references: [productId], onDelete: Cascade)
 }
 
 model Rating {
@@ -48,34 +50,50 @@ model Rating {
   ratingValue Int
   ratedTo     String
   ratedBy     String
-  ratedToUser User   @relation("RatedTo", fields: [ratedTo], references: [userId],onDelete: Cascade)
+  ratedToUser User   @relation("RatedTo", fields: [ratedTo], references: [userId], onDelete: Cascade)
   ratedByUser User   @relation("RatedBy", fields: [ratedBy], references: [userId], onDelete: Cascade)
 }
 
-model Wishlist{
-  wishlistId Int @id @default(autoincrement())
-  userId String
-  productId String
-  user User @relation("wishlistOfUser",fields: [userId], references: [userId],onDelete: Cascade)
-  product Product @relation("wishlistedProducts",fields: [productId],references: [productId],onDelete: Cascade)
+model Wishlist {
+  wishlistId Int     @id @default(autoincrement())
+  userId     String
+  productId  String
+  user       User    @relation("wishlistOfUser", fields: [userId], references: [userId], onDelete: Cascade)
+  product    Product @relation("wishlistedProducts", fields: [productId], references: [productId], onDelete: Cascade)
+
   @@unique([userId, productId])
 }
 
-model Notification{
-  notificationId Int @id @default(autoincrement())
-  userId String 
-  message String
-  isRead Boolean @default(false)
+model Notification {
+  notificationId   Int      @id @default(autoincrement())
+  userId           String
+  message          String
+  isRead           Boolean  @default(false)
   notificationTime DateTime @default(now())
-  userNotification User @relation("userNotification",fields: [userId], references: [userId],onDelete: Cascade)
+  userNotification User     @relation("userNotification", fields: [userId], references: [userId], onDelete: Cascade)
 }
 
-model Chat{
-  id Int @id
+model Chat {
+  id        String   @id @default(uuid())
+  user1     User     @relation("User1Chats", fields: [user1Id], references: [userId], onDelete: Cascade)
+  user1Id   String
+  user2     User     @relation("User2Chats", fields: [user2Id], references: [userId], onDelete: Cascade)
+  user2Id   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages ChatMessage[]
+
+  @@unique([user1Id, user2Id])
+}
+
+model ChatMessage {
+  id       String   @id @default(uuid())
+  chat     Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId   String
+  sender   User     @relation(fields: [senderId], references: [userId], onDelete: Cascade)
   senderId String
-  receiverId String
-  message String
-  timestamp DateTime @default(now())
-  senderUser User @relation("senderUser",fields: [senderId],references: [userId],onDelete: Cascade)
-  receiver User @relation("receiverUser",fields: [receiverId],references: [userId],onDelete: Cascade)
+  content  String
+  sentAt   DateTime @default(now())
+  isRead   Boolean  @default(false)
 }
