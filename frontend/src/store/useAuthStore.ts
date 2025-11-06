@@ -40,10 +40,10 @@ export const useAuthStore = create<AuthState>()(
           const user = result.user;
           console.log(user);
 
-          if (!(user.email === "marketplacemanit@gmail.com") && !user.email?.endsWith("@stu.manit.ac.in")) {
-            alert("Only MANIT accounts are authorized");
-            return;
-          }
+          // if (!(user.email === "marketplacemanit@gmail.com") && !user.email?.endsWith("@stu.manit.ac.in")) {
+          //   alert("Only MANIT accounts are authorized");
+          //   return;
+          // }
 
           let username = user.displayName!;
           const email = user.email!;

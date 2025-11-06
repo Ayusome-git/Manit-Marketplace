@@ -101,11 +101,11 @@ export function Appbar() {
             </DropdownMenu>
             <Heart
               className="cursor-pointer hover:text-primary transition-colors hover:fill-primary"
-              onClick={() => nav("profile/wishlist")}
+              onClick={() => nav("/profile/wishlist")}
             />
             <MessageCircle
               className="cursor-pointer hover:text-primary transition-colors hover:fill-primary"
-              onClick={() => nav("profile/chat")}
+              onClick={() => nav("/profile/chat")}
             />
             <Button onClick={() => nav("/profile/postad")} variant="default">
               <PlusCircle className="mr-1 h-5 w-5" /> Post Ad

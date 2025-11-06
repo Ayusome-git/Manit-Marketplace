@@ -1,10 +1,10 @@
-import express from 'express'
+import express, { Router } from 'express'
 import { PrismaClient } from '@prisma/client';
 import { authmiddleware } from '../middleware/authmiddleware';
 import { messaging } from 'firebase-admin';
 import { upload, uploadImageToCloudinary } from "../middleware/uploadMiddleware";
 
-const app = express();
+const app = Router();
 const client=new PrismaClient();
 
 
