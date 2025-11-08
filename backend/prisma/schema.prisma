@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -12,7 +12,9 @@ model User {
   email           String         @unique
   username        String
   phoneNo         String?        @unique
-  hostelNo        Int?
+  hostelNo        String?
+  description     String?
+  profilePhoto    String?         @default("https://github.com/shadcn.png")
   products        Product[]      @relation("UserProducts")
   ratingsGiven    Rating[]       @relation("RatedBy")
   ratingsReceived Rating[]       @relation("RatedTo")

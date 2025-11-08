@@ -75,6 +75,9 @@ export function AddProduct() {
       images.forEach((file) => {
         if (file) formData.append("images", file);
       });
+      for (const [key, value] of formData.entries()) {
+  console.log(key, value);
+}
       await addProductStore(formData);
       if(error){
         alert("Adding product failed");

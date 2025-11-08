@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `product` ADD COLUMN `views` INTEGER NOT NULL DEFAULT 0;
