@@ -24,14 +24,13 @@ import { Label } from "@radix-ui/react-dropdown-menu";
 import { useProductStore } from "../store/useProductStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
+import { Spinner } from "./ui/spinner";
 
 export function EditProduct() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, login } = useAuthStore();
   const { fetchProduct, loading, editProduct, error, product } = useProductStore();
-
-  
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -39,9 +38,9 @@ export function EditProduct() {
   const [category, setCategory] = useState("");
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
-
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [images, setImages] = useState<(File | null)[]>([null, null, null, null, null, null]);
+
 
 
   useEffect(() => {
@@ -85,12 +84,12 @@ export function EditProduct() {
 
   async function handleUpdateProduct() {
     if (!name || !category || !price || !productCondition || !description) {
-      alert("Please fill all required fields.");
+      toast("Please fill all required fields.");
       return;
     }
 
     if (!existingImages[0] && !images[0]) {
-      alert("At least one image is required.");
+      toast("At least one image is required.");
       return;
     }
     try {
@@ -102,11 +101,10 @@ export function EditProduct() {
       formData.append("productCondition", productCondition);
       if (date) formData.append("purchaseDate", date.toISOString());
 
-      // Send existing images
       existingImages.forEach((url) => {
         formData.append("existingImages", url);
       });
-      // Send new images
+
       images.forEach((file) => {
         if (file) formData.append("images", file);
       });
@@ -114,6 +112,7 @@ export function EditProduct() {
         await editProduct(id, formData);
       }
       toast.success("update successfull")
+      navigate("/profile/myads")
     } catch (e:any) {
       const message =
       e?.message || e?.response?.data?.error || "Failed to update product";
@@ -261,7 +260,6 @@ export function EditProduct() {
               </div>
             </div>
           ))}
-          {/* New images (only show up to 6 - existingImages.length) */}
           {Array.from({ length: 6 - existingImages.length }).map((_, idx) => (
             <div key={`new-${idx}`} className="flex flex-col items-center sm:h-72">
               <Label className="mb-1">New Image {existingImages.length + idx + 1}</Label>
@@ -291,7 +289,7 @@ export function EditProduct() {
         <div className="items-center justify-center w-full flex gap-5">
         <Button onClick={()=>navigate("/")}variant="secondary" >Cancle</Button>
           {loading ? (
-            <Button variant="destructive" className="cursor-not-allowed">Updating...</Button>
+            <Button variant="destructive" className="cursor-not-allowed">Updating<Spinner></Spinner></Button>
           ) : (
             <Button onClick={handleUpdateProduct}>Update Product</Button>
           )}

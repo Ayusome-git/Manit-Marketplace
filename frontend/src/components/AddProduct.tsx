@@ -23,6 +23,9 @@ import {
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { usePresenceData } from "motion/react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { Spinner } from "./ui/spinner";
 
 export function AddProduct() {
   const {user,login}=useAuthStore();
@@ -37,6 +40,7 @@ export function AddProduct() {
   const addProductStore = useProductStore((state) => state.addProduct);
   const loading = useProductStore((state) => state.loading);
   const error = useProductStore((state) => state.error);
+  const navigate=useNavigate()
 
   const handleFile = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -56,9 +60,8 @@ export function AddProduct() {
   }
 
   async function handleAddProduct() {
-    // Only require the first image
     if (!images[0]) {
-      alert("Please select the first (main) image.");
+      toast.error("Please select the first (main) image.");
       return;
     }
     try {
@@ -77,16 +80,16 @@ export function AddProduct() {
         alert("Adding product failed");
         return;
       }
-      alert("Product added");
-      // reset
+      toast.success("Product added");
       setName("");
       setDescription("");
       setImages([null, null, null, null, null, null]);
       setProductCondition("");
       setCategory("");
       setDate(undefined);
+      navigate("/profile/myads")
     } catch (e) {
-      alert("Adding product failed");
+      toast.error("Adding product failed");
     }
   }
   if (!user) {
@@ -252,7 +255,7 @@ export function AddProduct() {
           </div>
 
         <div className="items-center justify-center w-full flex">
-          {loading ? <Button variant="destructive" className="cursor-not-allowed"></Button> : (
+          {loading ? <Button variant="destructive" className="cursor-not-allowed">Posting Add <Spinner></Spinner></Button> : (
             <Button onClick={handleAddProduct}>Submit</Button>
           )}
         </div>

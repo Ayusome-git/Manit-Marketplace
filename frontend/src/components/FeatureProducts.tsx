@@ -27,8 +27,8 @@ export function FeaturedProducts() {
   return (
     <div className="font-sans px-4 sm:px-8 md:px-32">
       <div className="flex justify-between items-center mb-5">
-        <div className="w-fit text-xl sm:text-4xl font-semibold">Featured Items</div>
-        <div className="text-xl sm:text-4xl flex items-center gap-2 font-semibold cursor-pointer hover:text-primary transition-colors" onClick={()=>nav("/products")}>
+        <div className="w-fit text-xl sm:text-4xl font-semibold caret-transparent">Featured Items</div>
+        <div className="text-xl sm:text-4xl flex items-center gap-2 font-semibold cursor-pointer hover:text-primary caret-transparent transition-colors" onClick={()=>nav("/products")}>
           View All <ArrowRight className="sm:size-10" />
         </div>
       </div>

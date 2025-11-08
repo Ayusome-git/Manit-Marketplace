@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="w-full bg-background border-t py-6 mt-10 font-sans">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-4">
         <div className="text-muted-foreground text-sm">
-          © {new Date().getFullYear()} MANIT Marketplace. All rights reserved.
+           {new Date().getFullYear()} MANIT Marketplace.
         </div>
         <div className="flex items-center gap-4">
           <a

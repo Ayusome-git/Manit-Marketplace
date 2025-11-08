@@ -12,27 +12,81 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "./ui/badge";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useChatStore } from "@/store/useChatStore";
+import { ImageZoom } from "./ui/shadcn-io/image-zoom";
 
 export function Product() {
   const { fetchProduct, product, loading, error } = useProductStore();
   const { user } = useAuthStore();
+  const { createChat, setActiveChat, fetchChats} = useChatStore();
   const { id } = useParams<{ id: string }>();
   const isMobile = useIsMobile();
+  const nav = useNavigate();
+
   useEffect(() => {
     if (id) {
       fetchProduct(id);
     }
   }, [fetchProduct, id]);
 
-  if (loading) return <div>Loading featured products...</div>;
+ const handleChatWithSeller = async () => {
+  if (!user) {
+    alert("Please log in to chat with the seller.");
+    return;
+  }
+
+  if (!product?.seller?.userId) {
+    alert("Seller information not found.");
+    return;
+  }
+
+  const sellerId = product.seller.userId;
+
+  try {
+    const existingChat = useChatStore
+      .getState()
+      .chats.find(
+        (c) =>
+          (c.user1Id === user.userId && c.user2Id === sellerId) ||
+          (c.user1Id === sellerId && c.user2Id === user.userId)
+      );
+
+    let chatId = existingChat?.id;
+    if (!chatId) {
+      chatId = (await createChat(user.userId, sellerId)) ?? undefined;
+      if (!chatId) {
+        alert("Unable to create or retrieve chat ID.");
+        return;
+      }
+      await fetchChats(user.userId);
+    }
+    const chat = useChatStore.getState().chats.find((c) => c.id === chatId);
+    if (!chat) {
+      alert("Chat not found after creation.");
+      return;
+    }
+    setActiveChat(chat);
+    await fetchChats(chat.id);
+
+    nav("/profile/chat");
+  } catch (err) {
+    console.error("Failed to start chat:", err);
+    alert("Unable to start chat at the moment.");
+  }
+};
+
+
+  if (loading) return <div>Loading product...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
-  if (!product) return <div>No products available</div>;
+  if (!product) return <div>No product found</div>;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 px-5 sm:gap-4 font-sans">
+      {/* 🖼️ Product Images */}
       <div className="md:col-span-3 md:col-start-2">
         <Card>
           <Carousel className="w-full max-w-lg mx-auto">
@@ -41,13 +95,15 @@ export function Product() {
                 product.productImages.map((img, index) => (
                   <CarouselItem key={index}>
                     <div className="p-1 justify-center items-center flex mb-1">
-                      <div className="flex aspect-square items-center justify-center ">
-                        <img
-                          src={img.imageUrl}
-                          alt={product.name}
-                          className="overflow-hidden h-full w-full"
-                        />
-                      </div>
+                      <ImageZoom>
+                        <div className="flex aspect-square items-center justify-center">
+                          <img
+                            src={img.imageUrl}
+                            alt={product.name}
+                            className="overflow-hidden h-full w-full object-cover"
+                          />
+                        </div>
+                      </ImageZoom>
                     </div>
                   </CarouselItem>
                 ))
@@ -71,6 +127,8 @@ export function Product() {
             )}
           </Carousel>
         </Card>
+
+        {/* 🏷️ Product Meta */}
         <Card className="mt-5">
           <CardContent className="flex gap-5">
             <Badge>{product.category}</Badge>
@@ -79,12 +137,14 @@ export function Product() {
           </CardContent>
         </Card>
       </div>
-      <div className="md:col-span-2 md:col-start-5 mt-5 sm:mt-0 ">
+
+      {/* 📦 Product Details */}
+      <div className="md:col-span-2 md:col-start-5 mt-5 sm:mt-0">
         <Card>
           <CardContent className="flex flex-col items-start gap-1">
             <div className="text-3xl">{product.name}</div>
             <div className="gap-1 text-2xl">₹{product.price}</div>
-            <div className="flex justify-between items-center w-full ">
+            <div className="flex justify-between items-center w-full">
               <div className="flex items-center gap-1">
                 <Eye className="size-5" /> {product.viewCount}
               </div>
@@ -102,6 +162,8 @@ export function Product() {
             </div>
           </CardContent>
         </Card>
+
+        {/* 🧑‍💼 Seller Info + Chat Button */}
         <Card className="mt-5">
           <CardContent>
             <div className="flex gap-2">
@@ -120,16 +182,20 @@ export function Product() {
               </div>
             </div>
             <div className="w-full mt-4 flex justify-center items-center">
-              <Button>Chat With The Seller</Button>
+              <Button onClick={handleChatWithSeller}>
+                Chat With The Seller
+              </Button>
             </div>
           </CardContent>
         </Card>
+
+        {/* 📖 Description */}
         <Card className="mt-5 max-h-[254px] overflow-hidden">
           <CardContent>
             <div className="w-full flex justify-center text-2xl pb-2">
               Product Description
             </div>
-            <ScrollArea className="w-full h-[254px] pb-20 tracking-wide">
+            <ScrollArea className="h-[254px] pb-20 px-0">
               {product.description}
             </ScrollArea>
           </CardContent>

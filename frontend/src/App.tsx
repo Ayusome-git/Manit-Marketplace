@@ -9,6 +9,7 @@ import { Layout } from './components/Layout'
 import { Products } from './pages/Products'
 import { Toaster } from './components/ui/sonner'
 import { EditProduct } from './components/EditProduct'
+import ChatPage from './components/ChatPage'
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
             <Route path='/profile/:tab' element={<Profile />} />
             <Route path='/products' element={<Products />} />
             <Route path='/edit/:id' element={<EditProduct />} />
+            <Route path="/chat/:chatId" element={<ChatPage />} />
           </Route>
       </Routes>
     </BrowserRouter>

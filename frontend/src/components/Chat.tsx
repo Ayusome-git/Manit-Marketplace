@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
+import ChatPage from "./ChatPage";
 
 export function Chat() {
   const { user, login } = useAuthStore();
@@ -16,8 +17,8 @@ export function Chat() {
   }
   return (
     <>
-      <Card className="sm:mx-32 font-sans text-center items-center">
-        <div>Feature Under Development!</div>
+      <Card className="sm:mx-32 font-sans text-center items-center p-0">
+        <ChatPage></ChatPage>
         
       </Card>
     </>

@@ -13,7 +13,7 @@ export function AllProducts(props:filter){
     useEffect(() => {
         fetchProducts();
       }, [fetchProducts,props.category]);
-      if (loading) return <div>Loading featured products...</div>;
+      if (loading) return <div>Loading...</div>;
       if (error) return <div className="text-red-500">{error}</div>;
       // Filter products by category if a category is provided
       const filteredProducts = (props.category !=="all")

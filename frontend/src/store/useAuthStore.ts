@@ -1,6 +1,7 @@
 import axiosClient from "@/config/axios-config";
 import { auth, googleProvider } from "@/firebase/config";
 import { signInWithPopup } from "firebase/auth";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -31,17 +32,18 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         localStorage.removeItem("token")
         set({ user: null, token: null });
-        alert("you have logged out!!!");
+        toast("You have Successfully Logged out!!")
       },
       login: async () => {
         try {
           const result = await signInWithPopup(auth, googleProvider);
           const user = result.user;
+          console.log(user);
 
-          if (!(user.email === "marketplacemanit@gmail.com") && !user.email?.endsWith("@stu.manit.ac.in")) {
-            alert("Only MANIT accounts are authorized");
-            return;
-          }
+          // if (!(user.email === "marketplacemanit@gmail.com") && !user.email?.endsWith("@stu.manit.ac.in")) {
+          //   alert("Only MANIT accounts are authorized");
+          //   return;
+          // }
 
           let username = user.displayName!;
           const email = user.email!;
@@ -57,20 +59,21 @@ export const useAuthStore = create<AuthState>()(
           await axiosClient.post("/user/signin", { username, email, userId });
 
           set({ user: { username, email, userId, hostelNo, phoneNo }, token });
+          toast.success("Login Successfull");
         } catch (err: any) {
           if (err.code === "auth/popup-closed-by-user") {
-            alert("Login popup was closed by the user.");
+            toast.error("Login popup was closed by the user.");
           } else if (err.code === "auth/cancelled-popup-request") {
-            alert("Login request was cancelled.");
+            toast.error("Login request was cancelled.");
           } else {
-            alert(err.message || "Login failed");
+            toast.error(err.message || "Login failed");
           }
           console.error(err);
         }
       },
     }),
     {
-      name: "auth-storage", // key in localStorage
+      name: "auth-storage",
     }
   )
 );

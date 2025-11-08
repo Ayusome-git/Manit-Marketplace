@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Router } from 'express'
 import { PrismaClient } from '@prisma/client';
 import { authmiddleware } from '../middleware/authmiddleware';
 
@@ -51,6 +51,28 @@ app.get("/me",authmiddleware, async(req,res)=>{
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: "Internal server error" });
+    }
+})
+
+app.put("/",authmiddleware,async(req,res)=>{
+    //@ts-ignore
+    const userId=req.id
+    const hostelNo=req.body.hostelNo
+    if(!userId){
+        res.status(401).json({error:"unauthorized"})
+    }
+    try{
+        const update = await client.user.update({
+            where: {
+                userId: userId
+            },
+            data:{
+                hostelNo
+            }
+        })
+        res.status(200).json({message:"updated"})
+    }catch(e){
+        res.status(500).json({ error: e });
     }
 })
 
