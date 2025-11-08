@@ -56,10 +56,9 @@ const PopCard = ({ data } : PopCardProps) => {
   return (
     <div className="flex justify-center items-center border border-yellow-400">
       <div className="w-full">
-        hellooo
-        {/* <Button onClick={onClose}>
-          close
-        </Button> */}
+        phoneNo={data.phoneNo}
+        hostelNo={data.hostelNo}
+        products={data.products}
       </div>
     </div>
   )
