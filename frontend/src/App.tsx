@@ -5,7 +5,6 @@ import { ThemeProvider } from './components/ui/theme-provider'
 import AdminHomePage from './pages/AdminHomePage'
 import { ViewProduct } from './pages/ViewProduct'
 import { Profile } from './pages/Profile'
-// import { AdminRoutes } from './routes/AdminRoutes'
 import { Layout } from './components/Layout'
 import { Products } from './pages/Products'
 import { Toaster } from './components/ui/sonner'
@@ -20,8 +19,6 @@ function App() {
     <BrowserRouter>
     <Toaster richColors={true} position='bottom-right' invert={true}/>
       <Routes>
-        {/* admin routes */}
-        {/* {AdminRoutes} */}
         <Route element={<Layout />} >
             <Route path='/' element={<Homepage />} />
             <Route path='/admin' element={<AdminHomePage />} />

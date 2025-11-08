@@ -1,182 +1,229 @@
 import { useState } from "react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-
 import { format, startOfWeek, startOfMonth } from "date-fns"
-
-type GroupBy = "day" | "week" | "month"
-
-import {
- Card,
- CardContent,
- CardDescription,
- CardFooter,
- CardHeader,
- CardTitle,
-} from "@/components/ui/card"
-
-import type { ChartConfig } from "@/components/ui/chart"
-
-import {
- ChartContainer,
- ChartTooltip,
- ChartTooltipContent,
-} from "@/components/ui/chart"
-
-import { user_data } from "@/adminData"
-
-export const description = "A bar chart"
-
-//user
-const hostelCounts: Record<number, number> = user_data.reduce((acc, user) => {
- if (!user.hostelNo) return acc; // skip if no hostel
- acc[user.hostelNo] = (acc[user.hostelNo] || 0) + 1;
- return acc;
-}, {} as Record<number, number>);
-// Step 2: Transform into chartData format
-const chartData = Object.entries(hostelCounts).map(([hostel, count]) => ({
- hostel: `Hostel ${hostel}`,
- students: count,
-}));
-
-const chartConfig = {
- students: {
-  label: "Number of Students",
-  color: "var(--chart-1)",
- },
-} satisfies ChartConfig
-
-
-//products
-function groupProductsBy(products: Product[], groupBy: GroupBy) {
- const counts: Record<string, number> = {}
-
- products.forEach((p) => {
-  const date = p.listedAt // already a Date object
-
-  let key = ""
-  if (groupBy === "day") {
-   key = format(date, "yyyy-MM-dd") // e.g. 2025-09-17
-  } else if (groupBy === "week") {
-   key = format(startOfWeek(date), "yyyy-MM-dd") // start of week
-  } else if (groupBy === "month") {
-   key = format(startOfMonth(date), "yyyy-MM") // month
-  }
-
-  counts[key] = (counts[key] || 0) + 1
- })
-
- return Object.entries(counts).map(([period, count]) => ({
-  period,
-  products: count,
- }))
-}
-
+import BarChartCard from "@/components/Admin-BarChartCard"
+import type { GroupBy } from "@/components/Admin-BarChartCard"
+import { useAdminSectionStore } from "@/store/useAdminSections"
+import { chat_data } from "@/adminData"
+import PieChartCard from "./Admin-PieChartCard"
 
 type User = {
- userId: string;
- username: string;
- email: string;
- phoneNo: string;
- hostelNo: number;
- products: string[];
- ratingsGiven: string[];
- ratingsReceived: string[];
- wishlist: string[];
- notification: string[];
- senderUser: string[];
- receiverUser: string[];
- // add whatever fields your API returns
+  userId: string
+  username: string
+  email: string
+  phoneNo: string
+  hostelNo: number
+  products: string[]
+  ratingsGiven: string[]
+  ratingsReceived: string[]
+  wishlist: string[]
+  notification: string[]
+  senderUser: string[]
+  receiverUser: string[]
 }
 
 type Product = {
- productId: string;
- category: string;
- name: string;
- description: string;
- price: number;
- productCondition: string;
- viewCount: number;
- listedAt: Date;
- sellerId: string;
- // add more fields as needed
+  productId: string
+  category: string
+  name: string
+  description: string
+  price: number
+  productCondition: string
+  viewCount: number
+  listedAt: Date
+  sellerId: string
+}
+
+type Wishlist = {
+
+}
+
+type Notification = {
+  notificationId: number,
+  userId: String,
+  message: String,
+  isRead: Boolean,
+  notificationTime: Date,
+}
+
+type Chat = {
+  id: number,
+  senderId: String,
+  receiverId: String,
+  message: String,
+  timestamp: Date
 }
 
 type AdminDashboardProps = {
- user_data: User[]
- product_data: Product[]
+  user_data: User[]
+  product_data: Product[]
+  wishlist_data: Wishlist[]
+  notification_data: Notification[]
+  chat_data: Chat[]
 }
 
-const AdminDashboard = ({ user_data, product_data }: AdminDashboardProps) => {
+function groupProductsBy(products: Product[], groupBy: GroupBy) {
+  const counts: Record<string, number> = {}
 
- const [groupBy, setGroupBy] = useState<GroupBy>("month")
+  products.forEach((p) => {
+    const date = p.listedAt
+    let key = ""
+    if (groupBy === "day") key = format(date, "yyyy-MM-dd")
+    else if (groupBy === "week") key = format(startOfWeek(date), "yyyy-MM-dd")
+    else if (groupBy === "month") key = format(startOfMonth(date), "yyyy-MM")
+    counts[key] = (counts[key] || 0) + 1
+  })
 
- const productChartData = groupProductsBy(product_data, groupBy)
+  return Object.entries(counts).map(([period, count]) => ({
+    period,
+    products: count,
+  }))
+}
 
- return (
-  <div className="flex gap-2">
-   <Card className="h-[300px] w-[35%]">
-    <CardHeader>
-     <CardTitle><h4>Total users/students : {user_data.length}</h4></CardTitle>
-     {/* <CardDescription></CardDescription> */}
-    </CardHeader>
-    <CardContent>
-     <ChartContainer className="h-[180px] w-full" config={chartConfig}>
-      <BarChart accessibilityLayer data={chartData}>
-       <CartesianGrid vertical={false} />
-       <XAxis
-        dataKey="hostel"
-        tickLine={false}
-        tickMargin={10}
-        axisLine={false}
-        tickFormatter={(value) => value.replace("Hostel ", "H-")}
-       />
-       <ChartTooltip
-        cursor={false}
-        content={<ChartTooltipContent hideLabel />}
-       />
-       <Bar dataKey="students" fill="var(--chart-1)" radius={8} className="w-[10px]" />
-      </BarChart>
-     </ChartContainer>
-    </CardContent>
-   </Card>
+const AdminDashboard = (
+  { user_data, product_data, wishlist_data, notification_data }: AdminDashboardProps) => {
 
-   <Card className="h-[300px] w-[35%]">
-    <CardHeader className="flex flex-row items-center justify-between">
-     <CardTitle><h4>Total Products currently : {product_data.length}</h4></CardTitle>
-     <select
-      value={groupBy}
-      onChange={(e) => setGroupBy(e.target.value as GroupBy)}
-      className="border rounded px-2 py-1 text-sm"
-     >
-      <option value="day">Daily</option>
-      <option value="week">Weekly</option>
-      <option value="month">Monthly</option>
-     </select>
-    </CardHeader>
-    <CardContent>
-     <ChartContainer
-      className="h-[180px] w-full"
-      config={{ products: { label: "Products", color: "var(--chart-2)" } }}
-     >
-      <BarChart accessibilityLayer data={productChartData}>
-       <CartesianGrid vertical={false} />
-       <XAxis
-        dataKey="period"
-        tickLine={false}
-        tickMargin={10}
-        axisLine={false}
-       />
-       <ChartTooltip
-        cursor={false}
-        content={<ChartTooltipContent hideLabel />}
-       />
-       <Bar dataKey="products" fill="var(--chart-2)" radius={8} />
-      </BarChart>
-     </ChartContainer>
-    </CardContent>
-   </Card>
-  </div>
- )
+  const { openSection } = useAdminSectionStore();
+
+  const [groupBy, setGroupBy] = useState<GroupBy>("month")
+
+  // Prepare hostel data
+  const hostelCounts: Record<number, number> = user_data.reduce((acc, user) => {
+    if (!user.hostelNo) return acc
+    acc[user.hostelNo] = (acc[user.hostelNo] || 0) + 1
+    return acc
+  }, {} as Record<number, number>)
+
+  const userChartData = Object.entries(hostelCounts).map(([hostel, count]) => ({
+    hostel: `Hostel ${hostel}`,
+    students: count,
+  }))
+  console.log();
+  console.log(userChartData);
+
+  // Prepare product chart data
+  const productChartData = groupProductsBy(product_data, groupBy)
+
+  const allRatings = user_data.flatMap((u) => u.ratingsReceived.map(Number));
+
+  const overallAverage =
+    allRatings.reduce((sum, r) => sum + r, 0) / allRatings.length;
+
+  return (
+    <div className="h-full w-full">
+      <div className="grid grid-cols-12 gap-4 h-full w-full">
+
+        {!openSection && (<>
+          <div className="col-span-4 flex justify-center items-center">
+            <PieChartCard
+              title="Total Users/Students"
+              totalLabel={user_data.length}
+              data={userChartData}
+              xKey="hostel"
+              yKey="students"
+              footerDescription="Hostels"
+              // configLabel="Number of Students"
+              // tickFormatter={(value) => value.replace("Hostel ", "H-")}
+            />
+          </div>
+          <div className="col-span-4 flex justify-center items-center">
+            <BarChartCard
+              title="Total Products Added"
+              totalLabel={product_data.length}
+              data={productChartData}
+              xKey="period"
+              yKey="products"
+              colorVar="var(--chart-2)"
+              configLabel="Products Added"
+              groupByOptions={["day", "week", "month"]}
+              groupBy={groupBy}
+              onGroupByChange={setGroupBy}
+            />
+          </div>
+        </>)} 
+
+
+
+        {openSection == "users" && (
+          <div className="col-span-12 h-full w-full">
+            <div className="grid grid-cols-12 gap-4 h-full w-full items-center ">
+
+              <div className="col-span-4 h-full flex justify-center items-center ">
+                <BarChartCard
+                  title="Total Users/Students"
+                  totalLabel={user_data.length}
+                  data={userChartData}
+                  xKey="hostel"
+                  yKey="students"
+                  colorVar="var(--chart-1)"
+                  configLabel="Number of Students"
+                  tickFormatter={(value) => value.replace("Hostel ", "")}
+                />
+              </div>
+
+              <div className="col-span-4 h-full flex justify-center items-center ">
+                <BarChartCard
+                  title="Users Added today / this week / this month : ..." />
+              </div>
+
+              <div className="col-span-4 h-full w-full flex justify-around items-center flex-col p-4">
+                <div className="h-[75px] w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-4xl flex justify-center items-center flex-col">
+                  <h4 className="text-center">Total messages sent : </h4>
+                  <div>
+                    <span className="font-bold">{chat_data.length}</span>
+                  </div>
+                </div>
+                <div className="h-[75px] w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-4xl flex justify-center items-center flex-col">
+                  <h4 className="text-center">Average Ratings across all users : </h4>
+                  <div>
+                    <span className="font-bold">{overallAverage}</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )
+        }
+
+
+
+
+        {openSection == "products" && (<>
+          <div className="col-span-12 h-full w-full">
+            <div className="grid grid-cols-12 gap-4 h-full w-full items-center ">
+
+              <div className="col-span-4 h-full flex justify-center items-center ">
+                <BarChartCard />
+              </div>
+
+              <div className="col-span-4 h-full flex justify-center items-center ">
+                <BarChartCard />
+              </div>
+
+              <div className="col-span-4 h-full w-full flex justify-around items-center flex-col p-4">
+                <div className="h-[75px] w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-4xl flex justify-center items-center flex-col">
+                  <h4 className="text-center">total wishlisted items : </h4>
+                  <div>
+                    <span className="font-bold">{wishlist_data.length}</span>
+                  </div>
+                </div>
+                <div className="h-[75px] w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-4xl flex justify-center items-center flex-col">
+                  <h4 className="text-center font-normal">Most Wishlisted Item / Category : </h4>
+                  <div>
+                    <span className="font-bold">Calculator</span> / <span className="font-bold">Gadgets</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </>)
+        }
+
+      </div>
+
+    </div >
+  )
 }
 
 export default AdminDashboard

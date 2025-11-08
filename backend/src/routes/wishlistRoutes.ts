@@ -20,25 +20,25 @@ app.post("/",authmiddleware, async (req, res) => {
 });
 
 
-app.get("/:userId",authmiddleware, async (req, res) => {
-  const { userId } = req.params;
-  try {
-    const wishlist = await client.wishlist.findMany({
-      where: { userId },
-      include: {
-        product:{
-            include:{
-                productImages:true
-            }
-        }
-      },
-    });
-    res.status(200).json(wishlist);
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: "Failed to fetch wishlist" });
-  }
-});
+// app.get("/:userId",authmiddleware, async (req, res) => {
+//   const { userId } = req.params;
+//   try {
+//     const wishlist = await client.wishlist.findMany({
+//       where: { userId },
+//       include: {
+//         product:{
+//             include:{
+//                 productImages:true
+//             }
+//         }
+//       },
+//     });
+//     res.status(200).json(wishlist);
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500).json({ error: "Failed to fetch wishlist" });
+//   }
+// });
 
 app.delete("/:wishlistId",authmiddleware, async (req, res) => {
   const { wishlistId } = req.params;

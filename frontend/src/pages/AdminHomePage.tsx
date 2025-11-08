@@ -15,6 +15,32 @@ export default function AdminHomePage() {
 
   const { openSection, toggleSection } = useAdminSectionStore();
 
+  // let dashboardContent: JSX.Element | null = null
+
+  // switch (openSection) {
+  //   case "users":
+  //     dashboardContent = <AdminDashboard user_data={user_data} />
+  //     break
+  //   case "products":
+  //     dashboardContent = <AdminProductDetails product_data={product_data} />
+  //     break
+  //   case "notifications":
+  //     dashboardContent = <AdminNotification notification_data={notification_data} />
+  //     break
+  //   default:
+  //     dashboardContent = (
+  //       <AdminDashboard
+  //         user_data={user_data}
+  //         product_data={product_data}
+  //         wishlist_data={wishlist_data}
+  //         notification_data={notification_data}
+  //       // rating_data={rating_data}
+  //       // chat_data={chat_data}
+  //       />
+  //     )
+  //     break
+  // }
+
   // A small helper to render collapsible sections inline
   const renderSection = (title: string, sectionKey: Section, content: JSX.Element) => {
     const isOpen = openSection === sectionKey
@@ -62,29 +88,45 @@ export default function AdminHomePage() {
 
         <div className="flex-1 p-4">
           {/* Dashboard (default view when no section is open) */}
-          {!openSection ? (
+          {/* {!openSection ? (
             <div className="h-[400px] w-full p-4 border border-yellow-300 mb-4">
-              <AdminDashboard user_data={user_data} product_data={product_data}/>
+              <AdminDashboard user_data={user_data} product_data={product_data} wishlist_data={wishlist_data} />
             </div>
           ) : (
-            <>
-              <div className="h-[400px] w-full p-4 border border-yellow-300 mb-4">
-
-              </div>
-            </>
-          )}
+            <> */}
+          <div className="h-[400px] w-full p-4 border border-gray-300 mb-4">
+            <AdminDashboard
+              user_data={user_data}
+              product_data={product_data}
+              wishlist_data={wishlist_data}
+              notification_data={notification_data}
+              chat_data={chat_data}
+            />
+          </div>
+          
 
           {/* Sections */}
           <div className="space-y-4">
-            {renderSection("User Details", "users", <AdminUserDetails />)}
-            {renderSection("Product Details", "products", <AdminProductDetails />)}
-            {renderSection("Notifications", "notifications", <AdminNotification />)}
+            {renderSection("User Details", "users", <AdminUserDetails user_data={user_data} />)}
+            {renderSection("Product Details", "products", <AdminProductDetails product_data={product_data} />)}
+            {renderSection("Notifications", "notifications", <AdminNotification notification_data={notification_data} />)}
           </div>
         </div>
       </div>
     </SidebarProvider>
   )
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
