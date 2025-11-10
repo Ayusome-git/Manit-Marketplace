@@ -5,6 +5,7 @@ import userRoutes from './routes/userRoutes';
 import productRoutes from './routes/productRoutes'
 import wishlistRoutes from './routes/wishlistRoutes'
 import chatRoutes from './routes/chatRoutes'
+import adminRoutes from './routes/adminRoutes'
 
 const client = new PrismaClient();
 
@@ -16,6 +17,7 @@ app.use("/wishlist", wishlistRoutes);
 app.use("/user", userRoutes);
 app.use("/product", productRoutes);
 app.use("/chat", chatRoutes);
+app.use("/admin", adminRoutes);
 
 
 
