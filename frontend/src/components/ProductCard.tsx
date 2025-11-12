@@ -116,9 +116,10 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardContent className="pt-0 px-0">
         <Carousel
           plugins={[plugin.current]}
-          className="w-full max-w-xs pt-0 px-0"
+          className="w-full max-w-xs pt-0 px-0 cursor-pointer"
           onMouseEnter={plugin.current.stop}
           onMouseLeave={plugin.current.reset}
+          onClick={handleClick}
         >
           <CarouselContent className="pt-0 px-0">
             {product.productImages.length > 0 ? (

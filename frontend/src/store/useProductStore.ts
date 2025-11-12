@@ -124,7 +124,7 @@ export const useProductStore = create<ProductState>((set,get) => ({
       const RecentProducts = res.data as Product[];
       set({ RecentProducts, loading: false });
     } catch (err: any) {
-      set({ error: err.message || "Failed to fetch featured products", loading: false });
+      //set({ error: err.message || "Failed to fetch featured products", loading: false });
     }
   },
   

@@ -12,21 +12,72 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "./ui/badge";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useChatStore } from "@/store/useChatStore";
 import { ImageZoom } from "./ui/shadcn-io/image-zoom";
+import { useWishlistStore } from "@/store/useWishListStore";
+import { toast } from "sonner";
 
 export function Product() {
-  const { fetchProduct, product, loading, error } = useProductStore();
+  const { fetchProduct, product, loading, error,increaseCount } = useProductStore();
   const { user } = useAuthStore();
   const { createChat, setActiveChat, fetchChats} = useChatStore();
   const { id } = useParams<{ id: string }>();
   const isMobile = useIsMobile();
   const nav = useNavigate();
 
+  const {
+    addToWishlist,
+    isInWishlist,
+    removeFromWishlist,
+    getWishlistItemByProductId,
+    error: wishlistError,
+  } = useWishlistStore();
+  const handleClick = () => {
+    if(!product) return;
+    increaseCount(product.productId);
+    nav(`/product/${product.productId}`);
+  };
+
+  function remove() {
+    if (!user){
+      toast.warning("Login to Add to Wishlist")
+      return;
+    } 
+      
+    if(!product)return;
+    const wishlistItem = getWishlistItemByProductId(
+      user.userId,
+      product.productId
+    );
+    const wishlistId = wishlistItem?.wishlistId;
+    if (!wishlistId) return;
+    removeFromWishlist(wishlistId);
+    if (wishlistError) {
+      toast.error(wishlistError);
+      return;
+    }
+    toast.warning("Item Removed from WishList");
+  }
+
+  function handleAddToWishlist() {
+    if (!user){
+      toast.warning("Login to Add to Wishlist")
+      return;
+    } 
+    if(!product) return;
+    if (user) {
+      addToWishlist(user.userId, product.productId);
+    }
+    if (wishlistError) {
+      toast.error(wishlistError);
+      return;
+    }
+    toast.success("Item Added to WishList");
+  }
   useEffect(() => {
     if (id) {
       fetchProduct(id);
@@ -45,6 +96,7 @@ export function Product() {
   }
 
   const sellerId = product.seller.userId;
+  
 
   try {
     const existingChat = useChatStore
@@ -86,7 +138,6 @@ export function Product() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-7 px-5 sm:gap-4 font-sans">
-      {/* 🖼️ Product Images */}
       <div className="md:col-span-3 md:col-start-2">
         <Card>
           <Carousel className="w-full max-w-lg mx-auto">
@@ -128,7 +179,6 @@ export function Product() {
           </Carousel>
         </Card>
 
-        {/* 🏷️ Product Meta */}
         <Card className="mt-5">
           <CardContent className="flex gap-5">
             <Badge>{product.category}</Badge>
@@ -138,7 +188,7 @@ export function Product() {
         </Card>
       </div>
 
-      {/* 📦 Product Details */}
+      
       <div className="md:col-span-2 md:col-start-5 mt-5 sm:mt-0">
         <Card>
           <CardContent className="flex flex-col items-start gap-1">
@@ -149,11 +199,21 @@ export function Product() {
                 <Eye className="size-5" /> {product.viewCount}
               </div>
               <div>
-                {(!user ||
-                  (product.seller?.userId &&
-                    user.userId &&
-                    product.seller.userId !== user.userId)) && (
-                  <Heart className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary" />
+                
+                {product.seller?.userId !== user?.userId && (
+                  <div>
+                    {isInWishlist(product.productId) ? (
+                      <Heart
+                        onClick={() => remove()}
+                        className="size-5 cursor-pointer text-primary transition-colors fill-primary"
+                      />
+                    ) : (
+                      <Heart
+                        onClick={() => handleAddToWishlist()}
+                        className="size-5 cursor-pointer hover:text-primary transition-colors hover:fill-primary"
+                      />
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -163,7 +223,7 @@ export function Product() {
           </CardContent>
         </Card>
 
-        {/* 🧑‍💼 Seller Info + Chat Button */}
+        
         <Card className="mt-5">
           <CardContent>
             <div className="flex gap-2">
@@ -182,14 +242,16 @@ export function Product() {
               </div>
             </div>
             <div className="w-full mt-4 flex justify-center items-center">
+              {user?.userId!==product.sellerId?
               <Button onClick={handleChatWithSeller}>
                 Chat With The Seller
-              </Button>
+              </Button> : <Link to={`/edit/${product.productId}`}><Button>Edit Product</Button></Link>
+              }
             </div>
           </CardContent>
         </Card>
 
-        {/* 📖 Description */}
+        
         <Card className="mt-5 max-h-[254px] overflow-hidden">
           <CardContent>
             <div className="w-full flex justify-center text-2xl pb-2">

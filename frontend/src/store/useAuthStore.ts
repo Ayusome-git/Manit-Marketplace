@@ -11,19 +11,26 @@ export interface User{
     userId: string;
     username: string;
     phoneNo: string | null;
-    hostelNo: number | null;
+    hostelNo?: string | null;
+    description?: string | null;
+    profilePhoto?: string | null;
+
 }
 interface AuthState {
   user: User | null
   token: string | null;
   setUser: (user: AuthState["user"], token: string) => void;
   logout: () => void;
-  login: ()=>void;
+  login: () => Promise<void>;
+  // fetchUser will fetch the currently authenticated user's profile from the server.
+  // If `id` is provided it will be ignored because the backend exposes `/user/me` which
+  // reads identity from the auth middleware (token).
+  fetchUser: (id?: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       setUser: (user: User | null, token: string) => {
@@ -48,8 +55,6 @@ export const useAuthStore = create<AuthState>()(
           let username = user.displayName!;
           const email = user.email!;
           const userId = email.split("@")[0];
-          const hostelNo = null;
-          const phoneNo = null;
           const token = await user.getIdToken();
 
           if (email === "marketplacemanit@gmail.com") {
@@ -57,8 +62,7 @@ export const useAuthStore = create<AuthState>()(
           }
           localStorage.setItem("token",token)
           await axiosClient.post("/user/signin", { username, email, userId });
-
-          set({ user: { username, email, userId, hostelNo, phoneNo }, token });
+          await get().fetchUser(userId);
           toast.success("Login Successfull");
         } catch (err: any) {
           if (err.code === "auth/popup-closed-by-user") {
@@ -69,6 +73,21 @@ export const useAuthStore = create<AuthState>()(
             toast.error(err.message || "Login failed");
           }
           console.error(err);
+        }
+      },
+      fetchUser: async (_id?: string) => {
+        try {
+          const resp = await axiosClient.get("/user/me");
+          const userData = (resp?.data ?? null) as User | null;
+          if (!userData) {
+            set({ user: null });
+            return;
+          }
+
+          set({ user: userData });
+        } catch (err: any) {
+          console.error("Failed to fetch user:", err);
+          toast.error(err?.message || "Failed to fetch user");
         }
       },
     }),

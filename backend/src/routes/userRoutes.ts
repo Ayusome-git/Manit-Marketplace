@@ -58,6 +58,8 @@ app.put("/",authmiddleware,async(req,res)=>{
     //@ts-ignore
     const userId=req.id
     const hostelNo=req.body.hostelNo
+    const description = req.body.description;
+    const profilePhoto = req.body.profilePhoto;
     if(!userId){
         res.status(401).json({error:"unauthorized"})
     }
@@ -67,7 +69,9 @@ app.put("/",authmiddleware,async(req,res)=>{
                 userId: userId
             },
             data:{
-                hostelNo
+                hostelNo,
+                description,
+                profilePhoto
             }
         })
         res.status(200).json({message:"updated"})
