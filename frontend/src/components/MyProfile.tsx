@@ -16,15 +16,17 @@ import {
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
 import { Spinner } from "./ui/spinner";
-import { useState } from "react";
-import { useAsyncError } from "react-router-dom";
-import { useReducedMotion } from "motion/react";
+import { useState, useRef } from "react";
+import { toast } from "sonner";
 
 export function MyProfile() {
-  const { user, login, logout } = useAuthStore();
-  const [description,setDescription]=useState(user?.description)
-  const [hostelNo,setHostelNo] = useState(user?.hostelNo);
-  const [profilePhoto,setProfilePhoto]=useState(user?.profilePhoto);
+  const { user, login, logout, updateProfile } = useAuthStore();
+  const [description, setDescription] = useState<string | null | undefined>(user?.description ?? "");
+  const [hostelNo, setHostelNo] = useState<string | null | undefined>(user?.hostelNo ?? "");
+  const [profilePhoto, setProfilePhoto] = useState<string | null | undefined>(user?.profilePhoto ?? "");
+  const [file, setFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const fileRef = useRef<HTMLInputElement | null>(null);
   if (!user) {
     return (
       <Card className="sm:mx-32 font-sans text-center  items-center">
@@ -40,29 +42,46 @@ export function MyProfile() {
       <Card className="p-5 mx-5 sm:mx-32 font-sans">
         <div className="w-full flex flex-col justify-center items-center gap-2">
           <Avatar className="size-30">
-            <AvatarImage src={profilePhoto ?? undefined} alt="@shadcn" />
+            <AvatarImage src={profilePhoto ?? undefined} alt="" />
             <AvatarFallback>
               <Spinner />
             </AvatarFallback>
           </Avatar>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button size={"sm"} className="cursor-pointer">
-                Change Avatar
+          <div className="flex gap-2">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const f = e.target.files && e.target.files[0];
+                if (f) {
+                  setFile(f);
+                  setProfilePhoto(URL.createObjectURL(f));
+                }
+              }}
+              className="hidden"
+            />
+            <Button
+              size={"sm"}
+              className="cursor-pointer"
+              onClick={() => fileRef.current?.click()}
+            >
+              Change Avatar
+            </Button>
+            {file && (
+              <Button
+                size={"sm"}
+                variant="ghost"
+                onClick={() => {
+                  setFile(null);
+                  setProfilePhoto(user?.profilePhoto ?? "");
+                  if (fileRef.current) fileRef.current.value = "";
+                }}
+              >
+                Remove
               </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <Input type="file"></Input>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="cursor-pointer">
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction className="cursor-pointer" onClick={()=>{}}>
-                  Proceed
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+            )}
+          </div>
         </div>
         <div className="flex justify-between flex-col md:flex-row">
           <div className="gap-5 ">
@@ -91,7 +110,8 @@ export function MyProfile() {
               type="text"
               className="h-20 md:text-2xl w-fit text-center"
               placeholder="Hostel-9"
-              value="9"
+              value={hostelNo ?? ""}
+              onChange={(e) => setHostelNo(e.target.value)}
             ></Input>
           </div>
         </div>
@@ -100,11 +120,28 @@ export function MyProfile() {
           <Textarea
             className="sm:min-h-20"
             placeholder="Write About Your Self"
-            //onChange={(e) => setDescription(e.target.value)}
+            value={description ?? ""}
+            onChange={(e) => setDescription(e.target.value)}
           ></Textarea>
         </div>
         <div className="flex justify-end gap-5">
-          <Button>Save Changes</Button>
+          <Button
+            onClick={async () => {
+              if (!user) return;
+              setSaving(true);
+              try {
+                await updateProfile({ hostelNo: hostelNo ?? null, description: description ?? null, file });
+              } catch (err) {
+                console.error(err);
+                toast.error("Failed to save");
+              } finally {
+                setSaving(false);
+              }
+            }}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" className="cursor-pointer">

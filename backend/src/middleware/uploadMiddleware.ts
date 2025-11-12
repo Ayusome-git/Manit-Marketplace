@@ -49,9 +49,17 @@ export const uploadImageToCloudinary = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const files = req.files as Express.Multer.File[];
+    const filesArray = req.files as Express.Multer.File[] | undefined;
+    const singleFile = (req as any).file as Express.Multer.File | undefined;
 
-    if (!files || files.length === 0) {
+    const files: Express.Multer.File[] = [];
+    if (Array.isArray(filesArray) && filesArray.length > 0) {
+      files.push(...filesArray);
+    } else if (singleFile) {
+      files.push(singleFile);
+    }
+
+    if (files.length === 0) {
       req.body.imageUrls = [];
       return next();
     }
@@ -64,7 +72,7 @@ export const uploadImageToCloudinary = async (
     }
 
     req.body.imageUrls = imageUrls;
-    next();
+    return next();
   } catch (err) {
     console.error("Upload middleware error:", err);
     res.status(500).json({ error: "Image upload failed" });

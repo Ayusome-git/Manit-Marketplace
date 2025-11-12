@@ -22,10 +22,8 @@ interface AuthState {
   setUser: (user: AuthState["user"], token: string) => void;
   logout: () => void;
   login: () => Promise<void>;
-  // fetchUser will fetch the currently authenticated user's profile from the server.
-  // If `id` is provided it will be ignored because the backend exposes `/user/me` which
-  // reads identity from the auth middleware (token).
   fetchUser: (id?: string) => Promise<void>;
+  updateProfile: (payload: { hostelNo?: string | null; description?: string | null; file?: File | null }) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -88,6 +86,29 @@ export const useAuthStore = create<AuthState>()(
         } catch (err: any) {
           console.error("Failed to fetch user:", err);
           toast.error(err?.message || "Failed to fetch user");
+        }
+      },
+      updateProfile: async ({ hostelNo, description, file }) => {
+        try {
+          const form = new FormData();
+          if (hostelNo !== undefined && hostelNo !== null) form.append("hostelNo", hostelNo);
+          if (description !== undefined && description !== null) form.append("description", description);
+          if (file) form.append("profilePhoto", file);
+
+          const resp = await axiosClient.put("/user", form, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+
+          const updatedUser = ((resp?.data) as any)?.user ?? null;
+          if (updatedUser) {
+            set({ user: updatedUser });
+            toast.success("Profile updated");
+          } else {
+            toast.error("Failed to update profile");
+          }
+        } catch (err: any) {
+          console.error("Failed to update profile:", err);
+          toast.error(err?.message || "Failed to update profile");
         }
       },
     }),

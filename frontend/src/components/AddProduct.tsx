@@ -60,6 +60,10 @@ export function AddProduct() {
   }
 
   async function handleAddProduct() {
+    if (!name || !category || !price || !productCondition || !description) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
     if (!images[0]) {
       toast.error("Please select the first (main) image.");
       return;
