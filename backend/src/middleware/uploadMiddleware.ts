@@ -10,14 +10,14 @@ cloudinary.config({
   api_secret: process.env.CLOUD_SECRET!,
 });
 
-//Multer storage (in-memory)
+
 const storage = multer.memoryStorage();
 export const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB/file
+  limits: { fileSize: 10 * 1024 * 1024 }, 
 });
 
-//Helper: upload buffer to Cloudinary
+
 const uploadToCloudinary = (
   fileBuffer: Buffer,
   filename?: string
@@ -26,9 +26,9 @@ const uploadToCloudinary = (
     const stream = cloudinary.uploader.upload_stream(
       {
         folder: "products",
-        timeout: 1200000, // 120s timeout
+        timeout: 1200000, 
         resource_type: "image",
-        public_id: filename?.split(".")[0], // optional: name without extension
+        public_id: filename?.split(".")[0], 
       },
       (error, result) => {
         if (error) return reject(error);
@@ -37,12 +37,11 @@ const uploadToCloudinary = (
       }
     );
 
-    //MUST call .end() or stream never finishes
     stream.end(fileBuffer);
   });
 };
 
-//Middleware for multiple images
+
 export const uploadImageToCloudinary = async (
   req: Request,
   res: Response,

@@ -94,10 +94,7 @@ export function Product() {
     alert("Seller information not found.");
     return;
   }
-
   const sellerId = product.seller.userId;
-  
-
   try {
     const existingChat = useChatStore
       .getState()
@@ -243,9 +240,13 @@ export function Product() {
             </div>
             <div className="w-full mt-4 flex justify-center items-center">
               {user?.userId!==product.sellerId?
+              <div className="flex gap-5 items-center justify-center w-full">
+              <Link to={`/seller/${product.sellerId}`}><Button>View Seller</Button></Link>
               <Button onClick={handleChatWithSeller}>
                 Chat With The Seller
-              </Button> : <Link to={`/edit/${product.productId}`}><Button>Edit Product</Button></Link>
+              </Button>
+              </div>
+               : <Link to={`/edit/${product.productId}`}><Button>Edit Product</Button></Link>
               }
             </div>
           </CardContent>

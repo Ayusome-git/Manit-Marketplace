@@ -4,6 +4,7 @@ import { signInWithPopup } from "firebase/auth";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { Product } from "./useProductStore";
 
 
 export interface User{
@@ -16,14 +17,27 @@ export interface User{
     profilePhoto?: string | null;
 
 }
+interface Seller{
+  userId: string;
+  email: string;
+  phoneNo: string | null;
+  username: string;
+  hostelNo: string | null;
+  description: string | null;
+  profilePhoto: string | null;
+  products: Product[];
+}
 interface AuthState {
   user: User | null
   token: string | null;
+  loading?:boolean;
+  seller?:Seller
   setUser: (user: AuthState["user"], token: string) => void;
   logout: () => void;
   login: () => Promise<void>;
   fetchUser: (id?: string) => Promise<void>;
   updateProfile: (payload: { hostelNo?: string | null; description?: string | null; file?: File | null }) => Promise<void>;
+  viewSeller:(productId:string)=> Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -45,10 +59,10 @@ export const useAuthStore = create<AuthState>()(
           const user = result.user;
           console.log(user);
 
-          // if (!(user.email === "marketplacemanit@gmail.com") && !user.email?.endsWith("@stu.manit.ac.in")) {
-          //   alert("Only MANIT accounts are authorized");
-          //   return;
-          // }
+          if (!(user.email === "marketplacemanit@gmail.com") && !user.email?.endsWith("@stu.manit.ac.in")) {
+            toast.error("Only MANIT accounts are authorized");
+            return;
+          }
 
           let username = user.displayName!;
           const email = user.email!;
@@ -88,6 +102,22 @@ export const useAuthStore = create<AuthState>()(
           toast.error(err?.message || "Failed to fetch user");
         }
       },
+
+    viewSeller:async (id:string) => {
+    set({ loading: true});
+    try {
+      const res = await axiosClient.get(`/user/seller/${id}`);
+      
+      if(res.status!==200){
+        throw new Error("Something went wrong!");
+      }
+      
+      const seller = res.data as Seller;
+      set({ seller, loading: false });
+    } catch (err: any) {
+      set({ loading: false });
+    }
+  },
       updateProfile: async ({ hostelNo, description, file }) => {
         try {
           const form = new FormData();

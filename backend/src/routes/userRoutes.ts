@@ -55,6 +55,24 @@ app.get("/me",authmiddleware, async(req,res)=>{
     }
 })
 
+app.get("/seller/:id",async(req,res)=>{
+    const userId=req.params.id;
+    try{
+    const seller = await client.user.findUnique({
+        where:{userId:userId},
+        include:{
+            products:{
+                include:{
+                    productImages:true
+                }
+            }
+        }
+    })
+    res.status(200).json(seller)
+    }catch(e){
+        
+    }
+})
 
 app.put("/",authmiddleware,upload.single("profilePhoto"),uploadImageToCloudinary,async (req, res) => {
         //@ts-ignore

@@ -102,7 +102,7 @@ const ChatPage: React.FC = () => {
                     className={`p-2 rounded-2xl max-w-xs break-words ${
                       msg.senderId === user?.userId
                         ? "bg-primary text-white text-right"
-                        : "bg-accent text-white text-left"
+                        : "bg-secondary-foreground text-white text-left"
                     }`}
                   >
                     {msg.content}

@@ -109,7 +109,7 @@ export function MyProfile() {
             <Input
               type="text"
               className="h-20 md:text-2xl w-fit text-center"
-              placeholder="Hostel-9"
+              placeholder="Enter Your Hostel No"
               value={hostelNo ?? ""}
               onChange={(e) => setHostelNo(e.target.value)}
             ></Input>
