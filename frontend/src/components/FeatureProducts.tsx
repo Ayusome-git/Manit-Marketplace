@@ -5,6 +5,7 @@ import { useProductStore } from "../store/useProductStore";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useWishlistStore } from "@/store/useWishListStore";
+import { Spinner } from "./ui/spinner";
 
 export function FeaturedProducts() {
   const { featuredProducts, fetchFeaturedProducts, loading, error } = useProductStore();
@@ -20,9 +21,8 @@ export function FeaturedProducts() {
     }
   }, [fetchFeaturedProducts,user]);
 
-  if (loading) return <div>Loading featured products...</div>;
+  if (loading) return <div className="w-full flex justify-center items-center"><Spinner className="size-20"></Spinner></div>;
   if (error) return <div className="text-red-500">{error}</div>;
-  if (!featuredProducts.length) return <div>No products available</div>;
 
   return (
     <div className="font-sans px-4 sm:px-8 md:px-32">

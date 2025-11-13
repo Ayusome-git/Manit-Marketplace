@@ -12,9 +12,8 @@ export function RecentlyAdded() {
     fetchRecentProducts();
   }, [fetchRecentProducts]);
 
-  if (loading) return <div>Loading featured products...</div>;
+  if(loading) return <div></div>
   if (error) return <div className="text-red-500">{error}</div>;
-  if (!RecentProducts.length) return <div>No products available</div>;
 
   return (
     <div className="font-sans px-4 sm:px-8 md:px-32">

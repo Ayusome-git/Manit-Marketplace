@@ -10,6 +10,7 @@ export interface ProductImage {
 export interface Seller{
   userId:string
   username:string
+  profilePhoto?:string
 }
 export interface Product {
   productId: string;

@@ -129,7 +129,7 @@ export function Product() {
 };
 
 
-  if (loading) return <div>Loading product...</div>;
+  if (loading) return <div></div>;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!product) return <div>No product found</div>;
 
@@ -226,7 +226,7 @@ export function Product() {
             <div className="flex gap-2">
               <Avatar className="size-12">
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
+                  src={product.seller.profilePhoto}
                   alt="@shadcn"
                 />
                 <AvatarFallback>CN</AvatarFallback>

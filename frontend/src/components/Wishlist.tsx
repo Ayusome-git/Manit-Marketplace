@@ -4,6 +4,7 @@ import { Card } from "./ui/card";
 import { useWishlistStore } from "@/store/useWishListStore";
 import { useEffect } from "react";
 import { ProductCard } from "./ProductCard";
+import { Spinner } from "./ui/spinner";
 
 export function Wishlist() {
   const { wishlist, fetchWishlist, loading, error } = useWishlistStore();
@@ -24,9 +25,9 @@ export function Wishlist() {
       </Card>
     );
   }
-  if (loading) return <div>Loading featured products...</div>;
+  if (loading) return <div className="w-full flex justify-center items-center"><Spinner className="size-20"></Spinner></div>;
   if (error) return <div className="text-red-500">{error}</div>;
-  if (!wishlist.length) return <div>No items available</div>;
+  if (!wishlist.length) return <Card className="font-sans p-5 mx-5 sm:mx-32 text-center">Wishlist is Empty</Card>
 
   return (
     <Card className="font-sans p-5 mx-5 sm:mx-32">

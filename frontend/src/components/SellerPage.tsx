@@ -17,7 +17,7 @@ import { ProductCard } from "./ProductCard";
 export function SellerPage(){
     const { id } = useParams<{ id: string }>();
   const{seller,viewSeller} =useAuthStore();
-    const {user} = useAuthStore();
+    const {user,loading} = useAuthStore();
     const { createChat, setActiveChat, fetchChats} = useChatStore();
     const nav = useNavigate()
     
@@ -71,11 +71,16 @@ export function SellerPage(){
         if (id) viewSeller(id);
       }, [id, viewSeller]);
 
+      if(loading){
+        return<div className="mt-50 flex justify-center items-center w-full">
+            <Spinner className="size-36"></Spinner>
+        </div>
+      }
     return <div className="mt-30 flex w-full items-center justify-center font-sans">
         <div className="flex flex-col justify-center items-center">   
         <Card className="w-md ">
         <CardContent className="flex flex-col items-center justify-center gap-2">
-            <Avatar className="size-30">
+            <Avatar className="size-36">
             <AvatarImage src={seller?.profilePhoto ?? undefined} alt="" />
             <AvatarFallback>
               <Spinner></Spinner>
