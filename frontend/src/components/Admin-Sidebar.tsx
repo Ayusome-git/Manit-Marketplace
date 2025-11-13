@@ -1,18 +1,18 @@
 import { Menu } from 'lucide-react'
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarRail, SidebarTrigger } from './ui/sidebar'
 import { Separator } from './ui/separator'
-import { useAdminSectionStore } from '@/store/useAdminSections'
+import { useAdminStore } from '@/store/useAdminStore'
 import { NavUser } from './nav-user'
 
 const Adminsidebar = () => {
 
-  const { setSection, toggleSection } = useAdminSectionStore();
+  const { setSection, toggleSection } = useAdminStore();
 
-  const user = {
-    name: "Utkarsh",
-    email: "utk123@stu.manit.in",
-    avatar: "vite.svg"
-  }
+  // const user = {
+  //   name: "Utkarsh",
+  //   email: "utk123@stu.manit.in",
+  //   // avatar: "vite.svg"
+  // }
 
   return (
     <>
@@ -36,14 +36,14 @@ const Adminsidebar = () => {
               onClick={() => toggleSection("products")}>Product Details</h4>
           </SidebarGroup>
           <Separator className='bg-gray-500' />
-          <SidebarGroup>
+          {/* <SidebarGroup>
             <h4 className='cursor-pointer'
               onClick={() => toggleSection("notifications")}>Notifications</h4>
           </SidebarGroup>
-          <Separator className='bg-gray-500' />
+          <Separator className='bg-gray-500' /> */}
         </SidebarContent >
         <SidebarFooter>
-          <NavUser user={user} />
+          {/* <NavUser user={user} /> */}
         </SidebarFooter>
         <SidebarRail/>
       </Sidebar>

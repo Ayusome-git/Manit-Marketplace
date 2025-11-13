@@ -4,27 +4,36 @@ type User = {
   userId: string
   username: string
   email: string
-  phoneNo: string
+  phoneNo: number
   hostelNo: number
-  products: string[]
-  ratingsGiven: string[]
-  ratingsReceived: string[]
-  wishlist: string[]
-  notification: string[]
-  senderUser: string[]
-  receiverUser: string[]
+  // description?: string | null
+  // profilePhoto?: string
+}
+
+interface ProductImage {
+  imageId: string | number;
+  productId: string;
+  imageUrl: string;
+}
+
+interface Seller {
+  userId: string
+  username: string
 }
 
 type Product = {
-  productId: string
-  category: string
-  name: string
-  description: string
-  price: number
-  productCondition: string
-  viewCount: number
-  listedAt: Date
+  productId: string;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  productCondition: string;
+  purchaseDate?: string;
+  viewCount: number;
+  listedAt: string;
   sellerId: string
+  productImages: ProductImage[];
+  seller: Seller
 }
 
 type Wishlist = {
@@ -48,17 +57,18 @@ type Chat = {
 }
 
 type PopCardProps = {
-  data: User
+   user: User
+  products: Product[]
   // onClose: () => void
 }
 
-const PopCard = ({ data } : PopCardProps) => {
+const PopCard = ({ user, products }: PopCardProps) => {
   return (
     <div className="flex justify-center items-center border border-yellow-400">
       <div className="w-full">
-        phoneNo={data.phoneNo}
-        hostelNo={data.hostelNo}
-        products={data.products}
+        {/* phoneNo={user}
+        hostelNo={user.hostelNo} */}
+        {/* products={data.} */}
       </div>
     </div>
   )

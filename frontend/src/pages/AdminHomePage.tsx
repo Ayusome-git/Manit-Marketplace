@@ -1,219 +1,112 @@
-import Adminsidebar from "@/components/Admin-Sidebar"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { useAdminSectionStore, type Section } from "@/store/useAdminSections"
+import Adminsidebar from "@/components/Admin-Sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+// import { useAdminSectionStore, type Section } from "@/store/useAdminSections";
 import AdminUserDetails from "@/components/Admin-UserDetails";
 import AdminProductDetails from "@/components/Admin-ProductDetails";
 import AdminNotification from "@/components/Admin-Notification";
-import type { JSX } from "react";
 import AdminDashboard from "@/components/Admin-Dashboard";
 
-import { user_data, product_data, wishlist_data, product_image_data, chat_data, notification_data, rating_data } from "@/adminData";
+import { useEffect, type JSX } from "react";
+import { useAdminStore, type Section } from '@/store/useAdminStore'
+
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function AdminHomePage() {
+ const { fetchProducts, Products, fetchUsers, users, isLoading, error, openSection, toggleSection } = useAdminStore()
 
-  const { openSection, toggleSection } = useAdminSectionStore();
+ useEffect(() => {
+  fetchProducts();
+  fetchUsers();
+ }, [fetchUsers, fetchProducts])
 
-  // let dashboardContent: JSX.Element | null = null
+ // console.log("usersss", users)
+ // console.log("Productsss", Products)
 
-  // switch (openSection) {
-  //   case "users":
-  //     dashboardContent = <AdminDashboard user_data={user_data} />
-  //     break
-  //   case "products":
-  //     dashboardContent = <AdminProductDetails product_data={product_data} />
-  //     break
-  //   case "notifications":
-  //     dashboardContent = <AdminNotification notification_data={notification_data} />
-  //     break
-  //   default:
-  //     dashboardContent = (
-  //       <AdminDashboard
-  //         user_data={user_data}
-  //         product_data={product_data}
-  //         wishlist_data={wishlist_data}
-  //         notification_data={notification_data}
-  //       // rating_data={rating_data}
-  //       // chat_data={chat_data}
-  //       />
-  //     )
-  //     break
-  // }
+ const authUser = useAuthStore((s) => s.user)
 
-  // A small helper to render collapsible sections inline
-  const renderSection = (title: string, sectionKey: Section, content: JSX.Element) => {
-    const isOpen = openSection === sectionKey
-
-    return (
-      <div className="border rounded-lg overflow-hidden">
-        {/* Section Header */}
-        <div className="flex justify-between items-center p-4 cursor-pointer bg-gray-400"
-          onClick={() => toggleSection(sectionKey)}>
-          <h3 className="font-semibold">{title}</h3>
-          <motion.div
-            onClick={(e) => {
-              e.stopPropagation()
-              toggleSection(sectionKey)
-            }}
-            animate={{ rotate: isOpen ? 180 : 0 }}
-            transition={{ duration: 0.3 }}>
-            <ChevronDown />
-          </motion.div>
-        </div>
-
-        {/* Animated Content */}
-        <AnimatePresence initial={false}>
-          {isOpen && (
-            <motion.div
-              key="content"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="overflow-hidden"
-            >
-              <div className="p-4">{content}</div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    )
+ useEffect(() => {
+  if (!authUser) {
+   console.log("no authenticated user yet")
+   return
+  }
+  else {
+   console.log(authUser)
   }
 
+  fetchProducts()
+ }, [authUser, fetchProducts])
+
+ if (isLoading.products || isLoading.users) {
+  return <div>Loading...</div>;
+ }
+
+ if (error) {
+  return <div>Error: {error}</div>;
+ }
+
+ // A small helper to render collapsible sections inline
+ const renderSection = (title: string, sectionKey: Section, content: JSX.Element) => {
+  const isOpen = openSection === sectionKey;
+
   return (
-    <SidebarProvider className="w-[100%-16rem]">
-      <div className="flex min-h-screen w-full">
-        <Adminsidebar />
+   <div className="border rounded-lg overflow-hidden">
+    {/* Section Header */}
+    <div className="flex justify-between items-center p-4 cursor-pointer bg-gray-400"
+     onClick={() => toggleSection(sectionKey)}>
+     <h3 className="font-semibold">{title}</h3>
+     <motion.div
+      onClick={(e) => {
+       e.stopPropagation();
+       toggleSection(sectionKey);
+      }}
+      animate={{ rotate: isOpen ? 180 : 0 }}
+      transition={{ duration: 0.3 }}>
+      <ChevronDown />
+     </motion.div>
+    </div>
 
-        <div className="flex-1 p-4">
-          {/* Dashboard (default view when no section is open) */}
-          {/* {!openSection ? (
-            <div className="h-[400px] w-full p-4 border border-yellow-300 mb-4">
-              <AdminDashboard user_data={user_data} product_data={product_data} wishlist_data={wishlist_data} />
-            </div>
-          ) : (
-            <> */}
-          <div className="h-[400px] w-full p-4 border border-gray-300 mb-4">
-            <AdminDashboard
-              user_data={user_data}
-              product_data={product_data}
-              wishlist_data={wishlist_data}
-              notification_data={notification_data}
-              chat_data={chat_data}
-            />
-          </div>
-          
+    {/* Animated Content */}
+    <AnimatePresence initial={false}>
+     {isOpen && (
+      <motion.div
+       key="content"
+       initial={{ height: 0, opacity: 0 }}
+       animate={{ height: "auto", opacity: 1 }}
+       exit={{ height: 0, opacity: 0 }}
+       transition={{ duration: 0.3, ease: "easeInOut" }}
+       className="overflow-hidden"
+      >
+       <div className="p-4">{content}</div>
+      </motion.div>
+     )}
+    </AnimatePresence>
+   </div>
+  );
+ }
 
-          {/* Sections */}
-          <div className="space-y-4">
-            {renderSection("User Details", "users", <AdminUserDetails user_data={user_data} />)}
-            {renderSection("Product Details", "products", <AdminProductDetails product_data={product_data} />)}
-            {renderSection("Notifications", "notifications", <AdminNotification notification_data={notification_data} />)}
-          </div>
-        </div>
-      </div>
-    </SidebarProvider>
-  )
+ return (
+  <SidebarProvider className="w-[100%-16rem]">
+   <div className="flex min-h-screen w-full">
+    
+    <Adminsidebar />
+
+    <div className="flex-1 p-4">
+     <div className="h-[400px] w-full p-4 border border-gray-300 mb-4">
+      <AdminDashboard user_data={users} product_data={Products} />
+     </div>
+
+     {/* Sections */}
+     <div className="space-y-4">
+      {renderSection("User Details", "users", <AdminUserDetails user_data={users} />)}
+      {renderSection("Product Details", "products", <AdminProductDetails product_data={Products?.products || []} />)}
+      {/* <AdminNotification notification_data={[]} /> */}
+     </div>
+    </div>
+   </div>
+  </SidebarProvider>
+ );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// <SidebarProvider className="w-[100%-16rem]">
-//   <div className="flex min-h-screen w-full">
-//     <Adminsidebar />
-
-//     <div className="flex-1 p-4">
-//       <div className="h-[300px] w-full p-4 border border-yellow-300 mb-4">
-//         dashboard
-//       </div>
-
-//       {/* User Details */}
-//       <div className="border border-gray-400 space-y-4">
-
-//         {openSection === "users" ? (
-//           <div className="border rounded-lg">
-//             <div className="flex justify-between items-center p-4 cursor-pointer bg-gray-400"
-//               onClick={() => toggleSection("users")}>
-//               <h3 className="font-semibold">User Details</h3>
-//               <ChevronDown />
-//             </div>
-//             <div className="p-4">
-//               <AdminUserDetails />
-//             </div>
-//           </div>
-//         ) : (
-//           <>
-//             <div className="border rounded-lg">
-//               <div className="flex justify-between items-center p-4 cursor-pointer bg-gray-400"
-//                 onClick={() => toggleSection("users")}>
-//                 <h3 className="font-semibold">User Details</h3>
-//                 <ChevronDown />
-//               </div>
-//             </div>
-//           </>
-//         )}
-
-//         {/* Products */}
-//         {openSection === "products" ? (
-//           <div className="border rounded-lg">
-//             <div className="flex justify-between items-center p-4 cursor-pointer bg-gray-400"
-//               onClick={() => toggleSection("products")}>
-//               <h3 className="font-semibold">Product Details</h3>
-//               <ChevronDown />
-//             </div>
-//             <div className="p-4">
-//               <AdminProductDetails />
-//             </div>
-//           </div>
-//         ) : (
-//           <>
-//             <div className="border rounded-lg">
-//               <div className="flex justify-between items-center p-4 cursor-pointer bg-gray-400"
-//                 onClick={() => toggleSection("products")}>
-//                 <h3 className="font-semibold">Product Details</h3>
-//                 <ChevronDown />
-//               </div>
-//             </div>
-//           </>
-//         )}
-
-//         {/* Notifications */}
-//         {openSection === "notifications" ? (
-//           <div className="border rounded-lg">
-//             <div className="flex justify-between items-center p-4 cursor-pointer bg-gray-400"
-//               onClick={() => toggleSection("notifications")}>
-//               <h3 className="font-semibold">Notifications</h3>
-//               <ChevronDown />
-//             </div>
-//             <div className="p-4">
-//               <AdminNotification />
-//             </div>
-//           </div>
-//         ) : (
-//           <>
-//             <div className="border rounded-lg">
-//               <div className="flex justify-between items-center p-4 cursor-pointer bg-gray-400"
-//                 onClick={() => toggleSection("notifications")}>
-//                 <h3 className="font-semibold">Notifications</h3>
-//                 <ChevronDown />
-//               </div>
-//             </div>
-//           </>
-//         )}
-
-//       </div>
-//     </div>
-//   </div>
-// </SidebarProvider >

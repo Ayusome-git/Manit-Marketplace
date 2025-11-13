@@ -9,15 +9,8 @@ type User = {
   userId: string
   username: string
   email: string
-  phoneNo: string
+  phoneNo: number
   hostelNo: number
-  products: string[]
-  ratingsGiven: string[]
-  ratingsReceived: string[]
-  wishlist: string[]
-  notification: string[]
-  senderUser: string[]
-  receiverUser: string[]
 }
 
 type AdminUserDetailsProps = {
@@ -29,6 +22,7 @@ const AdminUserDetails = ({ user_data }: AdminUserDetailsProps) => {
   // const [showPopCard, setShowPopCard] = useState(false);
 
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  console.log(user_data)
 
   const columns = [
     { key: "serialNo", label: "Serial No." },
@@ -37,7 +31,7 @@ const AdminUserDetails = ({ user_data }: AdminUserDetailsProps) => {
     { key: "phoneNo", label: "Phone No." },
     { key: "email", label: "Email" },
     { key: "hostelNo", label: "Hostel No." },
-    { key: "actions", label: "Actions" }, // custom rendered
+    // { key: "actions", label: "Actions" },
   ]
 
   return (
@@ -52,22 +46,23 @@ const AdminUserDetails = ({ user_data }: AdminUserDetailsProps) => {
             <td className="font-medium px-4 py-3  text-center">{user_data.indexOf(user) + 1}</td>
             <td className="font-medium px-4 py-3  text-center">{user.userId}</td>
             <td className="font-bold capitalize px-4 py-3  text-center">{user.username}</td>
-            <td className="px-4 py-3  text-center">{user.phoneNo}</td>
+            <td className="px-4 py-3  text-center">{user.phoneNo == null ? <>-</> : user.phoneNo}</td>
             <td className="px-4 py-3  text-center">{user.email}</td>
-            <td className="px-4 py-3  text-center">{user.hostelNo}</td>
-            <td className="relative px-4 py-3  text-center">
-              {/* <SquarePen className="cursor-pointer text-blue-500 hover:text-blue-700" />
+            <td className="px-4 py-3  text-center">{user.hostelNo == null ? <>-</> : user.hostelNo}</td>
+            {/* <SquarePen className="cursor-pointer text-blue-500 hover:text-blue-700" />
               <Trash2 className="cursor-pointer text-red-500 hover:text-red-700" /> */}
+            {/* <td className="relative px-4 py-3  text-center">
+              
               <Button onClick={() => setSelectedUserId(selectedUserId === user.userId ? null : user.userId)}>
                 <AnimatePresence mode="wait">
                   <motion.span
-                    key={selectedUserId === user.userId ? 'close' : 'edit'}
+                    key={selectedUserId === user.userId ? 'View' : 'edit'}
                     initial={{ y: 10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -10, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    {selectedUserId === user.userId ? 'Close' : 'Edit'}
+                    {selectedUserId === user.userId ? 'View' : 'Edit'}
                   </motion.span>
                 </AnimatePresence>
 
@@ -78,7 +73,7 @@ const AdminUserDetails = ({ user_data }: AdminUserDetailsProps) => {
                   <ChevronDown />
                 </motion.div>
               </Button>
-            </td>
+            </td> */}
           </tr>,
           <AnimatePresence key={`animate-${user.userId}`}>
             {selectedUserId === user.userId && (
@@ -94,7 +89,7 @@ const AdminUserDetails = ({ user_data }: AdminUserDetailsProps) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     className="px-4 py-3 border">
-                    <PopCard data={user} />
+                    {/* <PopCard data={user} /> */}
                   </motion.div>
                 </td>
               </motion.tr>
