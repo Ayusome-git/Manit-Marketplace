@@ -113,7 +113,8 @@ app.get("/:id",async(req,res)=>{
                 seller:{
                     select:{
                         userId:true,
-                        username:true
+                        username:true,
+                        profilePhoto:true
                     }
                 }
             }

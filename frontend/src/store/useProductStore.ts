@@ -10,6 +10,7 @@ export interface ProductImage {
 export interface Seller{
   userId:string
   username:string
+  profilePhoto?:string
 }
 export interface Product {
   productId: string;
@@ -25,6 +26,7 @@ export interface Product {
   seller:Seller
 }
 interface ProductState {
+  
   Products: Product[];
   featuredProducts: Product[];
   MyProducts: Product[];
@@ -134,10 +136,6 @@ export const useProductStore = create<ProductState>((set,get) => ({
       const res = await axiosClient.post("/product", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      if(res.status!==200){
-        alert("failed to post ad")
-        throw new Error("Something went wrong!");
-      }
       const data = res.data as { response: Product };
       const newProduct = data.response;
       set((state) => ({
@@ -213,4 +211,5 @@ export const useProductStore = create<ProductState>((set,get) => ({
     throw new Error(message);
   }
 },
+
 }));

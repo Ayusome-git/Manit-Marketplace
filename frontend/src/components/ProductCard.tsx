@@ -116,11 +116,12 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardContent className="pt-0 px-0">
         <Carousel
           plugins={[plugin.current]}
-          className="w-full max-w-xs pt-0 px-0"
+          className="w-full max-w-xs pt-0 px-0 cursor-pointer"
           onMouseEnter={plugin.current.stop}
           onMouseLeave={plugin.current.reset}
+          
         >
-          <CarouselContent className="pt-0 px-0">
+          <CarouselContent className="pt-0 px-0" >
             {product.productImages.length > 0 ? (
               product.productImages.map((img, index) => (
                 <CarouselItem key={index}>
@@ -130,13 +131,14 @@ export function ProductCard({ product }: ProductCardProps) {
                         src={img.imageUrl}
                         alt={product.name}
                         className="overflow-hidden h-full w-full object-cover rounded-t-xl"
+                        onClick={handleClick}
                       />
                     </div>
                     <CarouselPrevious
                       className="absolute left-3 top-1/2 -translate-y-1/2 size-8 cursor-pointer 
                  bg-black/50 text-white rounded-full flex items-center justify-center opacity-0
                   group-hover:opacity-100 transition-opacity duration-300
-                 hover:bg-black hover:text-primary"
+                 hover:bg-black hover:text-primary "
                     />
                     <CarouselNext
                       className="absolute right-3 top-1/2 -translate-y-1/2 size-8 cursor-pointer 

@@ -10,14 +10,14 @@ cloudinary.config({
   api_secret: process.env.CLOUD_SECRET!,
 });
 
-//Multer storage (in-memory)
+
 const storage = multer.memoryStorage();
 export const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB/file
+  limits: { fileSize: 10 * 1024 * 1024 }, 
 });
 
-//Helper: upload buffer to Cloudinary
+
 const uploadToCloudinary = (
   fileBuffer: Buffer,
   filename?: string
@@ -26,9 +26,9 @@ const uploadToCloudinary = (
     const stream = cloudinary.uploader.upload_stream(
       {
         folder: "products",
-        timeout: 1200000, // 120s timeout
+        timeout: 1200000, 
         resource_type: "image",
-        public_id: filename?.split(".")[0], // optional: name without extension
+        public_id: filename?.split(".")[0], 
       },
       (error, result) => {
         if (error) return reject(error);
@@ -37,21 +37,28 @@ const uploadToCloudinary = (
       }
     );
 
-    //MUST call .end() or stream never finishes
     stream.end(fileBuffer);
   });
 };
 
-//Middleware for multiple images
+
 export const uploadImageToCloudinary = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const files = req.files as Express.Multer.File[];
+    const filesArray = req.files as Express.Multer.File[] | undefined;
+    const singleFile = (req as any).file as Express.Multer.File | undefined;
 
-    if (!files || files.length === 0) {
+    const files: Express.Multer.File[] = [];
+    if (Array.isArray(filesArray) && filesArray.length > 0) {
+      files.push(...filesArray);
+    } else if (singleFile) {
+      files.push(singleFile);
+    }
+
+    if (files.length === 0) {
       req.body.imageUrls = [];
       return next();
     }
@@ -64,7 +71,7 @@ export const uploadImageToCloudinary = async (
     }
 
     req.body.imageUrls = imageUrls;
-    next();
+    return next();
   } catch (err) {
     console.error("Upload middleware error:", err);
     res.status(500).json({ error: "Image upload failed" });

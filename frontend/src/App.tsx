@@ -10,6 +10,7 @@ import { Products } from './pages/Products'
 import { Toaster } from './components/ui/sonner'
 import { EditProduct } from './components/EditProduct'
 import ChatPage from './components/ChatPage'
+import { Seller } from './pages/Seller'
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
             <Route path='/products' element={<Products />} />
             <Route path='/edit/:id' element={<EditProduct />} />
             <Route path="/chat/:chatId" element={<ChatPage />} />
+            <Route path="/seller/:id" element={<Seller />} />
           </Route>
           <Route path='/admin' element={<AdminHomePage />} />
         </Routes>

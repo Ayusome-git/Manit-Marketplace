@@ -60,6 +60,10 @@ export function AddProduct() {
   }
 
   async function handleAddProduct() {
+    if (!name || !category || !price || !productCondition || !description) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
     if (!images[0]) {
       toast.error("Please select the first (main) image.");
       return;
@@ -75,12 +79,9 @@ export function AddProduct() {
       images.forEach((file) => {
         if (file) formData.append("images", file);
       });
-      for (const [key, value] of formData.entries()) {
-  console.log(key, value);
-}
       await addProductStore(formData);
       if(error){
-        alert("Adding product failed");
+        toast.error("Adding product failed");
         return;
       }
       toast.success("Product added");

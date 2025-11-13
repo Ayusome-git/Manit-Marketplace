@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useChatStore } from "@/store/useChatStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { MessageSquare, Send } from "lucide-react";
+import { Spinner } from "./ui/spinner";
 
 const ChatPage: React.FC = () => {
   const {
     chats,
     activeChat,
     messages,
+    loading,
     initSocket,
     fetchChats,
     sendMessage,
@@ -35,7 +37,7 @@ const ChatPage: React.FC = () => {
     await sendMessage(activeChat.id, user.userId, receiverId, messageInput.trim());
     setMessageInput("");
   };
-
+  
   return (
     <div className="flex h-[90vh] w-full border rounded-xl shadow-md overflow-hidden p-0 m-0">
       {/* Left: chats list */}
@@ -44,8 +46,13 @@ const ChatPage: React.FC = () => {
           <MessageSquare className="w-5 h-5 text-primary" /> Chats
         </h2>
 
+        {loading && (
+          <div className="w-full flex items-center justify-center">
+            <Spinner className="items-center justify-center" />
+          </div>
+        )}
         {chats.length === 0 ? (
-          <p className="text-sm ">No chats yet</p>
+          !loading && <p className="text-sm ">No chats yet</p>
         ) : (
           chats.map((chat) => {
             const otherUserId =
@@ -59,7 +66,7 @@ const ChatPage: React.FC = () => {
                 className={`p-3 mb-2 cursor-pointer rounded-lg transition-colors text-left ${
                   activeChat?.id === chat.id
                     ? "bg-primary text-white"
-                    : "bg-sidebar-primary-foreground hover:bg-accent"
+                    : "border hover:bg-accent"
                 }`}
               >
                 <div className="font-semibold text-sm">{otherUserId}</div>
@@ -82,6 +89,7 @@ const ChatPage: React.FC = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-1 ">
+                {loading && <div className="w-full flex items-center justify-center"> <Spinner className="items-center justify-center"> </Spinner></div>}
               {messages.map((msg) => (
                 <div
                   key={msg.id}
@@ -93,8 +101,8 @@ const ChatPage: React.FC = () => {
                   <div
                     className={`p-2 rounded-2xl max-w-xs break-words ${
                       msg.senderId === user?.userId
-                        ? "bg-primary text-right"
-                        : "bg-accent text-left"
+                        ? "bg-primary text-white text-right"
+                        : "bg-secondary-foreground text-white text-left"
                     }`}
                   >
                     {msg.content}

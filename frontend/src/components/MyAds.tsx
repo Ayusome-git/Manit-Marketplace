@@ -4,6 +4,7 @@ import { useProductStore } from "@/store/useProductStore";
 import { ProductCard } from "./ProductCard";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
 
 
 export function MyAds(){
@@ -22,9 +23,9 @@ export function MyAds(){
     </Card>
   );
 }
-  if (loading) return <div>Loading featured products...</div>;
+  if (loading) return <div className="w-full flex justify-center items-center"><Spinner className="size-20"></Spinner></div>;
   if (error) return <div className="text-red-500">{error}</div>;
-  if (!MyProducts.length) return <div>No products available</div>;
+  if (!MyProducts.length) return <Card className="font-sans p-5 mx-5 sm:mx-32"></Card>
 
   return (
     <Card className="font-sans p-5 mx-5 sm:mx-32">

@@ -25,7 +25,7 @@ export function SearchBar() {
                         onBlur={() => { setTimeout(() => { console.log('Input blurred'); setIsFocused(false); }, 200); }}
                         onChange={(e)=>setQuery(e.target.value)}
                     />
-                    <Button type="submit" aria-label="Search">
+                    <Button type="submit" aria-label="Search" className="ml-2">
                         <SearchIcon className="h-4 w-4" />
                     </Button>
                 </div>

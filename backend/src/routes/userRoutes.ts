@@ -1,6 +1,7 @@
 import express, { Router } from 'express'
 import { PrismaClient } from '@prisma/client';
 import { authmiddleware } from '../middleware/authmiddleware';
+import { upload, uploadImageToCloudinary } from '../middleware/uploadMiddleware';
 
 const app = express();
 const client=new PrismaClient();
@@ -54,27 +55,50 @@ app.get("/me",authmiddleware, async(req,res)=>{
     }
 })
 
-app.put("/",authmiddleware,async(req,res)=>{
-    //@ts-ignore
-    const userId=req.id
-    const hostelNo=req.body.hostelNo
-    if(!userId){
-        res.status(401).json({error:"unauthorized"})
-    }
+app.get("/seller/:id",async(req,res)=>{
+    const userId=req.params.id;
     try{
-        const update = await client.user.update({
-            where: {
-                userId: userId
-            },
-            data:{
-                hostelNo
+    const seller = await client.user.findUnique({
+        where:{userId:userId},
+        include:{
+            products:{
+                include:{
+                    productImages:true
+                }
             }
-        })
-        res.status(200).json({message:"updated"})
+        }
+    })
+    res.status(200).json(seller)
     }catch(e){
-        res.status(500).json({ error: e });
+        
     }
 })
+
+app.put("/",authmiddleware,upload.single("profilePhoto"),uploadImageToCloudinary,async (req, res) => {
+        //@ts-ignore
+        const userId = req.id;
+        const uploadedUrls = (req.body.imageUrls as string[] | undefined) ?? [];
+        const hostelNo = req.body.hostelNo;
+        const description = req.body.description;
+        const profilePhoto = uploadedUrls.length > 0 ? uploadedUrls[0] : req.body.profilePhoto;
+        try {
+            const update = await client.user.update({
+                where: {
+                    userId: userId,
+                },
+                data: {
+                    hostelNo,
+                    description,
+                    profilePhoto,
+                },
+            });
+            res.status(200).json({ message: "updated", user: update });
+        } catch (e) {
+            console.error(e);
+            res.status(500).json({ error: e });
+        }
+    }
+);
 
 
 export default app;
