@@ -1,56 +1,112 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+import Adminsidebar from "@/components/Admin-Sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
-import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import { ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+// import { useAdminSectionStore, type Section } from "@/store/useAdminSections";
+import AdminUserDetails from "@/components/Admin-UserDetails";
+import AdminProductDetails from "@/components/Admin-ProductDetails";
+import AdminNotification from "@/components/Admin-Notification";
+import AdminDashboard from "@/components/Admin-Dashboard";
+
+import { useEffect, type JSX } from "react";
+import { useAdminStore, type Section } from '@/store/useAdminStore'
+
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function AdminHomePage() {
+ const { fetchProducts, Products, fetchUsers, users, isLoading, error, openSection, toggleSection } = useAdminStore()
+
+ useEffect(() => {
+  fetchProducts();
+  fetchUsers();
+ }, [fetchUsers, fetchProducts])
+
+ // console.log("usersss", users)
+ // console.log("Productsss", Products)
+
+ const authUser = useAuthStore((s) => s.user)
+
+ useEffect(() => {
+  if (!authUser) {
+   console.log("no authenticated user yet")
+   return
+  }
+  else {
+   console.log(authUser)
+  }
+
+  fetchProducts()
+ }, [authUser, fetchProducts])
+
+ if (isLoading.products || isLoading.users) {
+  return <div>Loading...</div>;
+ }
+
+ if (error) {
+  return <div>Error: {error}</div>;
+ }
+
+ // A small helper to render collapsible sections inline
+ const renderSection = (title: string, sectionKey: Section, content: JSX.Element) => {
+  const isOpen = openSection === sectionKey;
+
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-          </div>
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  )
+   <div className="border rounded-lg overflow-hidden">
+    {/* Section Header */}
+    <div className="flex justify-between items-center p-4 cursor-pointer bg-gray-400"
+     onClick={() => toggleSection(sectionKey)}>
+     <h3 className="font-semibold">{title}</h3>
+     <motion.div
+      onClick={(e) => {
+       e.stopPropagation();
+       toggleSection(sectionKey);
+      }}
+      animate={{ rotate: isOpen ? 180 : 0 }}
+      transition={{ duration: 0.3 }}>
+      <ChevronDown />
+     </motion.div>
+    </div>
+
+    {/* Animated Content */}
+    <AnimatePresence initial={false}>
+     {isOpen && (
+      <motion.div
+       key="content"
+       initial={{ height: 0, opacity: 0 }}
+       animate={{ height: "auto", opacity: 1 }}
+       exit={{ height: 0, opacity: 0 }}
+       transition={{ duration: 0.3, ease: "easeInOut" }}
+       className="overflow-hidden"
+      >
+       <div className="p-4">{content}</div>
+      </motion.div>
+     )}
+    </AnimatePresence>
+   </div>
+  );
+ }
+
+ return (
+  <SidebarProvider className="w-[100%-16rem]">
+   <div className="flex min-h-screen w-full">
+    
+    <Adminsidebar />
+
+    <div className="flex-1 p-4">
+     <div className="h-[400px] w-full p-4 border border-gray-300 mb-4">
+      <AdminDashboard user_data={users} product_data={Products} />
+     </div>
+
+     {/* Sections */}
+     <div className="space-y-4">
+      {renderSection("User Details", "users", <AdminUserDetails user_data={users} />)}
+      {renderSection("Product Details", "products", <AdminProductDetails product_data={Products?.products || []} />)}
+      {/* <AdminNotification notification_data={[]} /> */}
+     </div>
+    </div>
+   </div>
+  </SidebarProvider>
+ );
 }

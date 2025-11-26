@@ -17,13 +17,12 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme='dark' storageKey="vite-ui-theme">
-    
-    <BrowserRouter>
-    <Toaster richColors={true} position='bottom-right' invert={true}/>
-      <Routes>
-        <Route element={<Layout />} >
+
+      <BrowserRouter>
+        <Toaster richColors={true} position='bottom-right' invert={true} />
+        <Routes>
+          <Route element={<Layout />} >
             <Route path='/' element={<Homepage />} />
-            <Route path='/admin' element={<AdminHomePage />} />
             <Route path='/product/:id' element={<ViewProduct />} />
             <Route path='/profile/:tab' element={<Profile />} />
             <Route path='/products' element={<Products />} />
@@ -31,8 +30,9 @@ function App() {
             <Route path="/chat/:chatId" element={<ChatPage />} />
             <Route path="/seller/:id" element={<Seller />} />
           </Route>
-      </Routes>
-    </BrowserRouter>
+          <Route path='/admin' element={<AdminHomePage />} />
+        </Routes>
+      </BrowserRouter>
     </ThemeProvider>
   )
 }
