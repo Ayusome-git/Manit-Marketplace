@@ -20,7 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
-import { Label } from "@radix-ui/react-dropdown-menu";
+import { Label } from "./ui/label";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";

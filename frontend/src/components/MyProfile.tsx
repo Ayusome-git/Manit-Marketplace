@@ -1,4 +1,4 @@
-import { Label } from "@radix-ui/react-dropdown-menu";
+import { Label } from "./ui/label";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";

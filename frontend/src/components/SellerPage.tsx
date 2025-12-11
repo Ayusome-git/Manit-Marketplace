@@ -5,10 +5,9 @@ import { Spinner } from "./ui/spinner";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { Item, ItemContent, ItemDescription, ItemTitle } from "./ui/item";
-import { ArrowRight, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Button } from "./ui/button";
 import { useChatStore } from "@/store/useChatStore";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
 import { ProductCard } from "./ProductCard";
 
 
