@@ -21,17 +21,18 @@ export function Appbar() {
   const isMobile = useIsMobile();
   const {user, logout,login} =useAuthStore()
 
+  // Mobile menu links aligned with desktop routes
   const menuItems = [
-    { label: "Profile", icon: <User className="h-5 w-5" />, path: "/profile" },
-    { label: "Wishlist", icon: <Heart className="h-5 w-5" />, path: "/wishlist" },
-    { label: "Messages", icon: <MessageCircle className="h-5 w-5" />, path: "/messages" },
+    { label: "Profile", icon: <User className="h-5 w-5" />, path: "/profile/myprofile" },
+    { label: "Wishlist", icon: <Heart className="h-5 w-5" />, path: "/profile/wishlist" },
+    { label: "Messages", icon: <MessageCircle className="h-5 w-5" />, path: "/profile/chat" },
   ];
 
   return (
     <>
       {isMobile ? (
-        <Card className="w-full flex flex-row items-center justify-between border-none py-3 px-4 font-sans fixed top-0 z-50 shadow-md mb-10">
-          <div className="font-bold text-xl">Manit Marketplace</div>
+        <Card className="w-full flex flex-row items-center justify-between rounded-none border-none py-3 px-4 font-sans fixed top-0 z-50 shadow-md mb-10">
+          <div className="font-bold text-xl" onClick={()=>nav("/")}>Manit Marketplace</div>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -71,7 +72,7 @@ export function Appbar() {
                   <SheetClose asChild>
                     <Button
                       className="flex items-center gap-2 w-fit shadow-md"
-                      onClick={() => nav("/postad")}
+                      onClick={() => nav("/profile/postad")}
                     >
                       <PlusCircle className="h-5 w-5" /> Post Ad
                     </Button>
