@@ -16,7 +16,6 @@ import { useWishlistStore } from "@/store/useWishListStore";
 import { toast } from "sonner";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -25,7 +24,6 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
-import { Wishlist } from "./Wishlist";
 
 interface ProductImage {
   imageId: string | number;
@@ -59,7 +57,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const increaseCount = useProductStore((state) => state.increaseCount);
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const{loading, error: productError, deleteProduct} =useProductStore()
+  const{ error: productError, deleteProduct} =useProductStore()
   const {
     addToWishlist,
     isInWishlist,

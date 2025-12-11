@@ -1,5 +1,5 @@
 import { Input } from "./ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card } from "./ui/card";
 import { Calendar } from "./ui/calendar";
 import { useProductStore } from "../store/useProductStore";
@@ -21,7 +21,6 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import { Label } from "@radix-ui/react-dropdown-menu";
-import { usePresenceData } from "motion/react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";

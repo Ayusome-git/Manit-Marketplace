@@ -22,7 +22,7 @@ import { useWishlistStore } from "@/store/useWishListStore";
 import { toast } from "sonner";
 
 export function Product() {
-  const { fetchProduct, product, loading, error,increaseCount } = useProductStore();
+  const { fetchProduct, product, loading, error } = useProductStore();
   const { user } = useAuthStore();
   const { createChat, setActiveChat, fetchChats} = useChatStore();
   const { id } = useParams<{ id: string }>();
@@ -36,11 +36,6 @@ export function Product() {
     getWishlistItemByProductId,
     error: wishlistError,
   } = useWishlistStore();
-  const handleClick = () => {
-    if(!product) return;
-    increaseCount(product.productId);
-    nav(`/product/${product.productId}`);
-  };
 
   function remove() {
     if (!user){

@@ -30,7 +30,7 @@ export function EditProduct() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, login } = useAuthStore();
-  const { fetchProduct, loading, editProduct, error, product } = useProductStore();
+  const { fetchProduct, loading, editProduct, product } = useProductStore();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");

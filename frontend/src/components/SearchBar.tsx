@@ -3,9 +3,8 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import { SearchResult } from "./SearchResult";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useProductStore } from "@/store/useProductStore";
-import { Product } from "./Product";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "./ui/scroll-area";
 

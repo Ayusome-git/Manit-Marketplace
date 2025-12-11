@@ -190,7 +190,7 @@ export const useProductStore = create<ProductState>((set,get) => ({
   editProduct: async (productId: string, formData: FormData) => {
   set({ loading: true, error: null });
   try {
-    const res = await axiosClient.put(`/product/${productId}`, formData, {
+    await axiosClient.put(`/product/${productId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     set({ loading: false });

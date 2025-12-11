@@ -9,7 +9,7 @@ import { Spinner } from "./ui/spinner";
 
 export function FeaturedProducts() {
   const { featuredProducts, fetchFeaturedProducts, loading, error } = useProductStore();
-  const {wishlist,fetchWishlist} =useWishlistStore()
+  const {fetchWishlist} =useWishlistStore()
   const{user} =useAuthStore()
   
   const nav = useNavigate()

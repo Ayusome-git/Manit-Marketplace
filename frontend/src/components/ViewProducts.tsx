@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AllProducts } from "./Allproducts";
 import { FilterCard } from "./FilterCard";
 import { SearchBar } from "./SearchBar";
-import { Card, CardContent } from "./ui/card"
+import { Card } from "./ui/card";
 
 
 
