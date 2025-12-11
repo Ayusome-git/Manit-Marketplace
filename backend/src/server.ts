@@ -5,12 +5,23 @@ import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 
 const app = express();
-app.use(cors({ origin: "*"}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 const server = http.createServer(app);
+
 const io = new Server(server, {
-  cors: { origin: "*", methods: ["GET", "POST"] },
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 
 const prisma = new PrismaClient();
@@ -23,19 +34,14 @@ io.on("connection", (socket) => {
     onlineUsers.set(userId, socket.id);
   });
 
-  socket.on("send_message", async (data: {
-    chatId: string;
-    senderId: string;
-    receiverId: string;
-    content: string;
-  }) => {
-    const { chatId, senderId, receiverId, content } = data || {};
+  socket.on("send_message", async (data) => {
+    const { chatId, senderId, receiverId, content } = data;
+
     if (!chatId || !senderId || !content) return;
 
     try {
       const message = await prisma.chatMessage.create({
         data: { chatId, senderId, content },
-        include: { sender: true },
       });
 
       await prisma.chat.update({
@@ -43,10 +49,13 @@ io.on("connection", (socket) => {
         data: { updatedAt: new Date() },
       });
 
-      const receiverSocket = receiverId ? onlineUsers.get(receiverId) : undefined;
+      // receiver
+      const receiverSocket = onlineUsers.get(receiverId);
       if (receiverSocket) {
         io.to(receiverSocket).emit("receive_message", message);
       }
+
+      // sender
       io.to(socket.id).emit("message_sent", message);
     } catch (err) {
       io.to(socket.id).emit("message_error", { error: "Failed to send message" });
@@ -63,5 +72,6 @@ io.on("connection", (socket) => {
   });
 });
 
-
-server.listen(5000);
+server.listen(5000, () => {
+  console.log("Server running on :5000");
+});

@@ -50,7 +50,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   initSocket: (userId) => {
     if (!userId) return;
 
-    const socketUrl =(import.meta as any)?.env?.VITE_SOCKET_URL || "http://localhost:5000";
+    const socketUrl = (import.meta as any)?.env?.VITE_SOCKET_URL || "http://localhost:5000";
 
     const socket = io(socketUrl, {
       transports: ["websocket"],
@@ -69,15 +69,34 @@ export const useChatStore = create<ChatState>((set, get) => ({
           messages: [...state.messages, message],
         }));
       }
-      set((state) => {
-        const updatedChats = state.chats.map((chat) =>
+
+      set((state) => ({
+        chats: state.chats.map((chat) =>
           chat.id === message.chatId
             ? { ...chat, updatedAt: new Date().toISOString(), messages: [message] }
             : chat
-        );
-        return { chats: updatedChats };
-      });
+        ),
+      }));
     });
+
+    socket.on("message_sent", (message: Message) => {
+      const activeId = get().activeChat?.id;
+
+      if (message.chatId === activeId) {
+        set((state) => ({
+          messages: [...state.messages, message],
+        }));
+      }
+
+      set((state) => ({
+        chats: state.chats.map((chat) =>
+          chat.id === message.chatId
+            ? { ...chat, updatedAt: new Date().toISOString(), messages: [message] }
+            : chat
+        ),
+      }));
+    });
+
     set({ socket });
   },
 
@@ -87,7 +106,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const res = await axiosClient.get(`/chat/user/${userId}`);
       set({ chats: res.data as Chat[], loading: false });
     } catch (err: any) {
-      console.error("Error fetching chats:", err.message);
       set({ error: err.message, loading: false });
     }
   },
@@ -100,18 +118,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
           (c.user1Id === user2Id && c.user2Id === user1Id)
       );
 
-      if (existingChat) {
-        return existingChat.id;
-      }
+      if (existingChat) return existingChat.id;
 
       const res = await axiosClient.post(`/chat/create`, { user1Id, user2Id });
       const newChat = res.data as Chat;
 
-      set((state) => {
-        const alreadyExists = state.chats.some((chat) => chat.id === newChat.id);
-        if (alreadyExists) return state;
-        return { chats: [newChat, ...state.chats] };
-      });
+      set((state) => ({
+        chats: [newChat, ...state.chats],
+      }));
 
       return newChat.id;
     } catch (err: any) {
@@ -133,53 +147,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
   sendMessage: async (chatId, senderId, receiverId, content) => {
     const socket = get().socket;
 
-    if (!socket || !socket.connected) {
-      set({ error: "Socket disconnected" });
+    if (!socket) {
+      set({ error: "Socket not connected" });
       return;
     }
 
-    const payload = { chatId, senderId, receiverId, content };
-    socket.emit("send_message", payload);
-    set((state) => ({
-      messages: [
-        ...state.messages,
-        {
-          id: `optimistic-${Date.now()}`,
-          chatId,
-          senderId,
-          content,
-          sentAt: new Date().toISOString(),
-          isRead: false,
-        },
-      ],
-    }));
-
-    
-    set((state) => ({
-      chats: state.chats.map((chat) =>
-        chat.id === chatId
-          ? {
-              ...chat,
-              updatedAt: new Date().toISOString(),
-              messages: [
-                {
-                  id: `optimistic-${Date.now()}`,
-                  chatId,
-                  senderId,
-                  content,
-                  sentAt: new Date().toISOString(),
-                  isRead: false,
-                },
-              ],
-            }
-          : chat
-      ),
-    }));
+    socket.emit("send_message", {
+      chatId,
+      senderId,
+      receiverId,
+      content,
+    });
   },
+
   setActiveChat: (chat) => {
     set({ activeChat: chat, messages: [] });
-    if (chat?.id) {
-      get().fetchMessages(chat.id);
-    }
+    if (chat?.id) get().fetchMessages(chat.id);
   },
 }));
