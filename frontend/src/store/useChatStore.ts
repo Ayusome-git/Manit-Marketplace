@@ -50,7 +50,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   initSocket: (userId) => {
     if (!userId) return;
 
-    const socketUrl = (import.meta as any)?.env?.VITE_SOCKET_URL || "http://localhost:5000";
+    const socketUrl = "https://manit-marketplace.onrender.com";
 
     const socket = io(socketUrl, {
       transports: ["websocket"],

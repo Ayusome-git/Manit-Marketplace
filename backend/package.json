@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsc -b && node dist/index.js",
     "build": "tsc -b",
-    "start": "concurrently \"node dist/index.js\" \"node dist/server.js\""
+    "start": "node dist/index.js & node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -29,8 +29,5 @@
     "socket.io": "^4.8.1",
     "streamifier": "^0.1.1",
     "typescript": "^5.9.3"
-  },
-  "devDependencies": {
-    "concurrently": "^9.2.1"
   }
 }
