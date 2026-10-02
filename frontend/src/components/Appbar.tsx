@@ -101,9 +101,22 @@ export function Appbar() {
               <Heart className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
             </Button>
             
-            <Button variant="ghost" size="icon" title="Notifications">
-              <Bell className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" title="Notifications">
+                  <Bell className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64 p-4">
+                <div className="text-center py-6">
+                  {user ? (
+                    <span className="text-sm font-medium text-muted-foreground">No new notifications</span>
+                  ) : (
+                    <span className="text-sm font-medium text-muted-foreground">Log in to see notifications</span>
+                  )}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <Button variant="ghost" size="icon" onClick={() => nav("/profile/chat")} title="Messages">
               <MessageCircle className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
