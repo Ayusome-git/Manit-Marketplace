@@ -1,6 +1,6 @@
 import { ArrowRight, Flame } from "lucide-react";
 import { ProductCard } from "./ProductCard";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useProductStore } from "../store/useProductStore";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -25,13 +25,18 @@ export function FeaturedProducts() {
     }
   }, [fetchFeaturedProducts, user]);
 
+  const shuffledFeatures = useMemo(() => {
+    if (!featuredProducts || featuredProducts.length === 0) return [];
+    return [...featuredProducts].sort(() => 0.5 - Math.random());
+  }, [featuredProducts]);
+
   if (loading) return <div className="w-full flex justify-center items-center py-20"><Spinner className="size-10 text-primary" /></div>;
   if (error) return <div className="text-destructive text-center py-10 bg-destructive/10 rounded-xl mx-4 sm:mx-8 md:mx-32">{error}</div>;
 
   if (featuredProducts.length === 0) return null;
 
-  const mainProduct = featuredProducts[0];
-  const sideProducts = featuredProducts.slice(1, 4); // Take 3 smaller ones for compact vertical stacking
+  const mainProduct = shuffledFeatures[0];
+  const sideProducts = shuffledFeatures.slice(1, 4); // Take 3 smaller ones for compact vertical stacking
 
   return (
     <section className="font-sans container mx-auto px-4 sm:px-8 md:px-12 lg:px-32 mb-12">

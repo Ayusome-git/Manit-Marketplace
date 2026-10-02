@@ -1,7 +1,7 @@
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { useProductStore } from "@/store/useProductStore";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { ArrowRight, Tag, Heart } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { SmartImage } from "./ui/smart-image";
@@ -38,8 +38,12 @@ export function HeroSection() {
     mouseY.set(0);
   };
 
-  // Get some products for the visual showcase
-  const displayProducts = Products?.length > 0 ? Products.slice(0, 3) : null;
+  // Get some random products for the visual showcase
+  const displayProducts = useMemo(() => {
+    if (!Products || Products.length === 0) return null;
+    return [...Products].sort(() => 0.5 - Math.random()).slice(0, 3);
+  }, [Products]);
+
   const mainProduct = displayProducts?.[0];
   const secProduct = displayProducts?.[1];
   const thirdProduct = displayProducts?.[2];
