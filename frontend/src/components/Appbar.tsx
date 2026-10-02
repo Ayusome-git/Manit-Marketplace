@@ -1,5 +1,4 @@
 import { Heart, MessageCircle, PlusCircle, User, Menu, Bell } from "lucide-react";
-import { ModeToggle } from "./ui/darktoggle";
 import { Button } from "./ui/button";
 
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
@@ -52,7 +51,6 @@ export function Appbar() {
                 >
                   <div className="flex justify-between items-center border-b pb-4">
                     <span className="font-semibold text-lg">{user ? user.username : 'Menu'}</span>
-                    <ModeToggle />
                   </div>
 
                   {menuItems.map((item, idx) => (
@@ -98,7 +96,6 @@ export function Appbar() {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <ModeToggle />
             
             <Button variant="ghost" size="icon" onClick={() => nav("/profile/wishlist")} title="Wishlist">
               <Heart className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
