@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { AllProducts } from "./Allproducts";
 import { FilterCard } from "./FilterCard";
-import { SearchBar } from "./SearchBar";
 import { Grid, List, Filter } from "lucide-react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
