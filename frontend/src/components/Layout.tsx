@@ -1,6 +1,7 @@
 import { Appbar } from "@/components/Appbar";
 import { Footer } from "@/components/Footer";
 import { Outlet } from "react-router-dom";
+import { CommandPalette } from "@/components/CommandPalette";
 
 export function Layout() {
   return (
@@ -12,6 +13,7 @@ export function Layout() {
       <footer className="w-full">
         <Footer />
       </footer>
+      <CommandPalette />
     </div>
   );
 }

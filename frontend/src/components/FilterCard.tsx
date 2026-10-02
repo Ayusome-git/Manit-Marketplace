@@ -1,4 +1,3 @@
-import { Card, CardContent } from "./ui/card";
 import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
@@ -8,45 +7,46 @@ type FilterCardProps = {
 };
 
 export function FilterCard({ value, onChange }: FilterCardProps) {
+  const categories = [
+    { id: "all", label: "All Products" },
+    { id: "electronics", label: "Electronics" },
+    { id: "study materials", label: "Study Materials" },
+    { id: "hostel essentials", label: "Hostel Essentials" },
+    { id: "clothing", label: "Clothing" },
+    { id: "sports", label: "Sports" },
+    { id: "vehicles", label: "Vehicles" },
+    { id: "miscellaneous", label: "Miscellaneous" },
+  ];
+
   return (
-    <Card className="h-fit">
-      <CardContent>
-        <div className="mb-2">Category</div>
-        <RadioGroup value={value} onValueChange={onChange}>
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="all" id="r1" />
-            <Label htmlFor="r1">All</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="electronics" id="r2" />
-            <Label htmlFor="r2">Electronics & Gadgets</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="stationary" id="r3" />
-            <Label htmlFor="r3">Books & Stationary</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="cycle" id="r4" />
-            <Label htmlFor="r4">Cycle</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="furniture" id="r5" />
-            <Label htmlFor="r5">Furniture</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="health" id="r6" />
-            <Label htmlFor="r6">Health & Beauty</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="sports" id="r7" />
-            <Label htmlFor="r7">Sports & Fitness</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="kitchen" id="r8" />
-            <Label htmlFor="r8">Kitchen & Dining</Label>
-          </div>
+    <div className="flex flex-col gap-6 font-sans">
+      <div>
+        <h3 className="text-lg font-semibold tracking-tight text-foreground mb-4">Categories</h3>
+        <RadioGroup value={value} onValueChange={onChange} className="flex flex-col gap-3">
+          {categories.map((cat) => (
+            <div key={cat.id} className="flex items-center space-x-3">
+              <RadioGroupItem 
+                value={cat.id} 
+                id={cat.id} 
+                className="text-primary border-muted-foreground/30 data-[state=checked]:border-primary"
+              />
+              <Label 
+                htmlFor={cat.id} 
+                className={`text-sm cursor-pointer transition-colors hover:text-foreground ${value === cat.id ? 'text-foreground font-medium' : 'text-muted-foreground font-light'}`}
+              >
+                {cat.label}
+              </Label>
+            </div>
+          ))}
         </RadioGroup>
-      </CardContent>
-    </Card>
+      </div>
+      
+      <div className="border-t border-border/50 pt-6">
+        <h3 className="text-lg font-semibold tracking-tight text-foreground mb-4">Condition</h3>
+        <div className="text-sm text-muted-foreground font-light italic">
+          Coming soon
+        </div>
+      </div>
+    </div>
   );
 }

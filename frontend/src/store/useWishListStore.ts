@@ -3,7 +3,6 @@ import axiosClient from "@/config/axios-config";
 import type { Product } from "./useProductStore";
  
 
-
 export interface WishlistItem {
   wishlistId: number;
   userId: string;
@@ -44,6 +43,18 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
   },
 
   addToWishlist: async (userId, productId) => {
+    const previousWishlist = get().wishlist;
+    // Optimistic UI update
+    const tempId = Date.now();
+    const tempItem: WishlistItem = {
+      wishlistId: tempId,
+      userId,
+      productId,
+      product: {} as Product // dummy data for optimistic UI
+    };
+    
+    set({ wishlist: [...previousWishlist, tempItem], error: null });
+
     try {
       const response = await axiosClient.post<WishlistItem>("/wishlist", {
         userId,
@@ -52,23 +63,34 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
       if(response.status!==200){
         throw new Error("Something went wrong!");
       }
-      await get().fetchWishlist(userId);
+      // Replace temp item with real data from server
+      set({ 
+        wishlist: get().wishlist.map(item => 
+          item.wishlistId === tempId ? response.data : item
+        )
+      });
     } catch (error) {
-      set({ error: "Failed to add to wishlist" });
+      // Revert on error
+      set({ wishlist: previousWishlist, error: "Failed to add to wishlist" });
     }
   },
 
   removeFromWishlist: async (wishlistId) => {
+    const previousWishlist = get().wishlist;
+    // Optimistic UI update
+    set({
+      wishlist: previousWishlist.filter((item) => item.wishlistId !== wishlistId),
+      error: null
+    });
+
     try {
-      const response=await axiosClient.delete(`/wishlist/${wishlistId}`);
+      const response = await axiosClient.delete(`/wishlist/${wishlistId}`);
       if(response.status!==200){
         throw new Error("Something went wrong!");
       }
-      set({
-        wishlist: get().wishlist.filter((item) => item.wishlistId !== wishlistId),
-      });
     } catch (error) {
-      set({ error: "Failed to remove from wishlist" });
+      // Revert on error
+      set({ wishlist: previousWishlist, error: "Failed to remove from wishlist" });
     }
   },
 
@@ -77,6 +99,6 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
     return get().wishlist.some((item) => item.productId === productId);
   },
   getWishlistItemByProductId: (userId:string,productId: string) => {
-  return get().wishlist.find((item) => item.productId === productId && item.userId===userId);
-},
+    return get().wishlist.find((item) => item.productId === productId && item.userId===userId);
+  },
 }));

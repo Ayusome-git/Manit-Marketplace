@@ -12,6 +12,8 @@ import { EditProduct } from './components/EditProduct'
 import ChatPage from './components/ChatPage'
 import { Seller } from './pages/Seller'
 
+import { ScrollToTop } from './components/ScrollToTop'
+
 function App() {
 
 
@@ -19,7 +21,8 @@ function App() {
     <ThemeProvider defaultTheme='dark' storageKey="vite-ui-theme">
     
     <BrowserRouter>
-    <Toaster richColors={true} position='bottom-right' invert={true}/>
+      <ScrollToTop />
+      <Toaster richColors={true} position='bottom-right' invert={true}/>
       <Routes>
         <Route element={<Layout />} >
             <Route path='/' element={<Homepage />} />
