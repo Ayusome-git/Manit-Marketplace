@@ -137,7 +137,7 @@ export function Appbar() {
                 {user ? (
                   <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer" onClick={logout}>Logout</DropdownMenuItem>
                 ) : (
-                  <DropdownMenuItem className="cursor-pointer" onClick={login}>Login</DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer" onSelect={(e) => { e.preventDefault(); login(); }}>Login</DropdownMenuItem>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>

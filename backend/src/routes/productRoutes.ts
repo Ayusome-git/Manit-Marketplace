@@ -46,7 +46,9 @@ app.get("/all",async(req,res)=>{
     try{
         const response=await client.product.findMany({
             include:{
-                productImages:true
+                productImages: {
+                    take: 1
+                }
             }
         })
         res.status(200).json(response)
@@ -60,7 +62,9 @@ app.get("/featured",async(req,res)=>{
             orderBy:{viewCount:"desc"},
             take:8,
             include:{
-                productImages:true
+                productImages: {
+                    take: 1
+                }
             }
         })
         
@@ -75,7 +79,9 @@ app.get("/recent",async(req,res)=>{
             orderBy:{listedAt:"desc"},
             take:8,
             include:{
-                productImages:true
+                productImages: {
+                    take: 1
+                }
             }
         })
         
@@ -93,7 +99,9 @@ app.get("/myads",authmiddleware,async(req,res)=>{
                 sellerId: userId
             },
             include:{
-                productImages:true
+                productImages: {
+                    take: 1
+                }
             }
         })
         res.status(200).json(products)
